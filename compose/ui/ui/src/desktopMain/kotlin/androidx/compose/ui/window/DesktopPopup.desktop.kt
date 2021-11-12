@@ -34,6 +34,7 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.SkiaBasedOwner
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.setContent
+import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.IntOffset
@@ -188,14 +189,22 @@ private fun PopupLayout(
 
                     layout(constraints.maxWidth, constraints.maxHeight) {
                         measurables.forEach {
-                            val placeable = it.measure(constraints)
-                            val position = popupPositionProvider.calculatePosition(
+                            var position = popupPositionProvider.calculatePosition(
+                                anchorBounds = parentBounds,
+                                windowSize = IntSize(width, height),
+                                layoutDirection = layoutDirection,
+                                popupContentSize = IntSize.Zero
+                            )
+                            // Vertically constraints correction
+                            val placeable = it.measure(constraints.copy(
+                                maxHeight = height - position.y
+                            ))
+                            position = popupPositionProvider.calculatePosition(
                                 anchorBounds = parentBounds,
                                 windowSize = IntSize(width, height),
                                 layoutDirection = layoutDirection,
                                 popupContentSize = IntSize(placeable.width, placeable.height)
                             )
-
                             popupBounds = IntRect(
                                 position,
                                 IntSize(placeable.width, placeable.height)
