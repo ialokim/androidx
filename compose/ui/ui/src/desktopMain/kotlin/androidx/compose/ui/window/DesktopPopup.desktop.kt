@@ -186,19 +186,21 @@ private fun PopupLayout(
                 measurePolicy = { measurables, constraints ->
                     val width = constraints.maxWidth
                     val height = constraints.maxHeight
+                    var position = popupPositionProvider.calculatePosition(
+                        anchorBounds = parentBounds,
+                        windowSize = IntSize(width, height),
+                        layoutDirection = layoutDirection,
+                        popupContentSize = IntSize.Zero
+                    )
+
+                    val layoutConstrants = constraints.copy(
+                        maxHeight = height - parentBounds.height,
+                        maxWidth = width - parentBounds.width
+                    )
 
                     layout(constraints.maxWidth, constraints.maxHeight) {
                         measurables.forEach {
-                            var position = popupPositionProvider.calculatePosition(
-                                anchorBounds = parentBounds,
-                                windowSize = IntSize(width, height),
-                                layoutDirection = layoutDirection,
-                                popupContentSize = IntSize.Zero
-                            )
-                            // Vertically constraints correction
-                            val placeable = it.measure(constraints.copy(
-                                maxHeight = height - position.y
-                            ))
+                            val placeable = it.measure(layoutConstrants)
                             position = popupPositionProvider.calculatePosition(
                                 anchorBounds = parentBounds,
                                 windowSize = IntSize(width, height),

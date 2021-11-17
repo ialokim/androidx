@@ -231,7 +231,7 @@ private data class DesktopDropdownMenuPositionProvider(
         
         // Desktop specific vertical position checking
         val aboveAnchor = anchorBounds.top + contentOffsetY
-        val belowAnchor = windowSize.height - anchorBounds.bottom + contentOffsetY
+        val belowAnchor = windowSize.height - anchorBounds.bottom - contentOffsetY
 
         if (belowAnchor >= aboveAnchor) {
             y = anchorBounds.bottom + contentOffsetY
