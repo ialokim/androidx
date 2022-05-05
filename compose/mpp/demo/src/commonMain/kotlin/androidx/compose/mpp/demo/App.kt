@@ -31,6 +31,7 @@ import androidx.compose.ui.platform.LocalUriHandler
 
 @Composable
 fun myContent() {
+    var textState by remember { mutableStateOf("text field") }
     var tick by remember { mutableStateOf(false) }
     var selected by remember { mutableStateOf(false) }
     var clutz by remember { mutableStateOf(false) }
@@ -39,6 +40,9 @@ fun myContent() {
     val clipboard = LocalClipboardManager.current
     val uriHandler = LocalUriHandler.current
     Column {
+//        TextField(value = textState, onValueChange = {
+//            textState = it
+//        })
         Box(
             modifier = Modifier
                 .padding(16.dp)
