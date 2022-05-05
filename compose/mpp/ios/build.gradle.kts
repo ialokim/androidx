@@ -5,7 +5,7 @@ plugins {
 apple {
     iosApp {
         println("sourceSet.name: ${sourceSet.name}")
-        productName = "appcodekmmgradle"
+        productName = "composeuikit"
 
         sceneDelegateClass = "SceneDelegate"
         launchStoryboard = "LaunchScreen"

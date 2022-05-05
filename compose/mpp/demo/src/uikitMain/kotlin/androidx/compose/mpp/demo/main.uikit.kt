@@ -1,7 +1,6 @@
 // Use `xcodegen` first, then `open ./SkikoSample.xcodeproj` and then Run button in XCode.
 package androidx.compose.mpp.demo
 
-import androidx.compose.ui.window.Application
 import kotlinx.cinterop.*
 import platform.UIKit.*
 import platform.Foundation.*
@@ -31,9 +30,7 @@ class SkikoAppDelegate : UIResponder, UIApplicationDelegateProtocol {
 
     override fun application(application: UIApplication, didFinishLaunchingWithOptions: Map<Any?, *>?): Boolean {
         window = UIWindow(frame = UIScreen.mainScreen.bounds)
-        window!!.rootViewController = Application("Compose/Native sample") {
-            myContent()
-        }
+        window!!.rootViewController = getSkikoViewContoller()
         window!!.makeKeyAndVisible()
         return true
     }
