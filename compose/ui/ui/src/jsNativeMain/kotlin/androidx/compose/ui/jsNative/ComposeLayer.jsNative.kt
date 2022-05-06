@@ -20,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.ComposeScene
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.key.KeyEvent as ComposeKeyEvent
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.input.pointer.toCompose
 import androidx.compose.ui.input.pointer.PointerType
 import androidx.compose.ui.platform.PlatformComponent
@@ -40,11 +41,25 @@ import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.input.key.KeyEvent
 import androidx.compose.ui.platform.WindowInfoImpl
 import androidx.compose.ui.createSkiaLayer
+import androidx.compose.ui.input.key.NativeKeyEvent
+import androidx.compose.ui.window.WindowExceptionHandler
 
 internal class ComposeLayer {
     private var isDisposed = false
 
     internal val layer = createSkiaLayer()
+
+    @OptIn(ExperimentalComposeUiApi::class)
+    var exceptionHandler: WindowExceptionHandler? = null
+
+    @OptIn(ExperimentalComposeUiApi::class)
+    private fun catchExceptions(body: () -> Unit) {
+        try {
+            body()
+        } catch (e: Throwable) {
+            exceptionHandler?.onException(e) ?: throw e
+        }
+    }
 
     inner class ComponentImpl : SkikoView, PlatformComponent {
         override fun onRender(canvas: Canvas, width: Int, height: Int, nanoTime: Long) {
@@ -57,8 +72,11 @@ internal class ComposeLayer {
             TODO("need scene.sendInputEvent")
         }
 
-        override fun onKeyboardEvent(event: SkikoKeyboardEvent) {
-            TODO("need scene.sendKeyEvent")
+        override fun onKeyboardEvent(event: SkikoKeyboardEvent) = catchExceptions {
+            if (isDisposed) return@catchExceptions
+            if (scene.sendKeyEvent(ComposeKeyEvent(NativeKeyEvent()))) {
+                event.consume()
+            }
         }
 
         override fun onTouchEvent(events: Array<SkikoTouchEvent>) {

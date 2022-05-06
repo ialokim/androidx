@@ -15,6 +15,7 @@ import androidx.compose.material.Checkbox
 import androidx.compose.material.RadioButton
 import androidx.compose.material.Switch
 import androidx.compose.material.Text
+import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -50,9 +51,6 @@ fun getSkikoViewContoller() = Application("Compose/Native sample") {
     val clipboard = LocalClipboardManager.current
     val uriHandler = LocalUriHandler.current
     Column {
-//        TextField(value = textState, onValueChange = {
-//            textState = it
-//        })
         Box(
             modifier = Modifier
                 .padding(16.dp)
@@ -129,7 +127,10 @@ fun getSkikoViewContoller() = Application("Compose/Native sample") {
                 Text(text)
             }
         }
-
+        Text("hi")
+        TextField(value = textState, onValueChange = {
+            textState = it
+        })
     }
     LaunchedEffect(Unit) {
         while (true) {
