@@ -74,7 +74,9 @@ internal class TextFieldKeyInput(
 
     private fun typedCommand(event: KeyEvent): CommitTextCommand? =
         if (event.isTypedEvent) {
-            val text = StringBuilder().appendCodePointX(event.utf16CodePoint)
+            val codePoint = event.utf16CodePoint
+            println("codePoint: $codePoint")
+            val text = StringBuilder().appendCodePointX(codePoint)//+93
                 .toString()
             CommitTextCommand(text, 1)
         } else {

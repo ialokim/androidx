@@ -218,8 +218,10 @@ internal class SkiaBasedOwner(
 
     override val viewConfiguration: ViewConfiguration = DefaultViewConfiguration(density)
 
-    override fun sendKeyEvent(keyEvent: KeyEvent): Boolean =
-        sendKeyEvent(platformInputService, keyInputModifier, keyEvent)
+    override fun sendKeyEvent(keyEvent: KeyEvent): Boolean {
+        println("sendKeyEvent $keyEvent")
+        return sendKeyEvent(platformInputService, keyInputModifier, keyEvent)
+    }
 
     override var showLayoutBounds = false
 

@@ -29,20 +29,28 @@ internal actual class PlatformInput actual constructor(component: PlatformCompon
         imeOptions: ImeOptions,
         onEditCommand: (List<EditCommand>) -> Unit,
         onImeActionPerformed: (ImeAction) -> Unit
-    ) =
-        TODO("implement native PlatformInput")
+    ) {
+        println("DIMA startInput, value: $value, imeOptions: $imeOptions, $onEditCommand")
+ //        onEditCommand.invoke(listOf(CommitTextCommand("I", 0)))
+    }
 
-    override fun stopInput() =
-        TODO("implement native PlatformInput")
+    override fun stopInput() {
+        println("DIMA stopInput")
+    }
 
-    override fun showSoftwareKeyboard() {}
+    override fun showSoftwareKeyboard() {
+        println("DIMA showSoftwareKeyboard")
+    }
 
-    override fun hideSoftwareKeyboard() {}
+    override fun hideSoftwareKeyboard() {
 
-    override fun updateState(oldValue: TextFieldValue?, newValue: TextFieldValue) =
-        TODO("implement native PlatformInput")
+    }
+
+    override fun updateState(oldValue: TextFieldValue?, newValue: TextFieldValue) {
+        println("DIMA updateState, oldValue: $oldValue, newValue:$newValue")
+    }
 
     override fun notifyFocusedRect(rect: Rect) =
-        TODO("implement native PlatformInput")
+        TODO("deprecated notifyFocusedRect")
 }
 

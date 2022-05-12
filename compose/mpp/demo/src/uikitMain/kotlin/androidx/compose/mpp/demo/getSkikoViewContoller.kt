@@ -127,7 +127,10 @@ fun getSkikoViewContoller() = Application("Compose/Native sample") {
                 Text(text)
             }
         }
-        Text("hi")
+        Text("hi iOS")
+        TextField(value = textState, onValueChange = {
+            textState = it
+        })
         TextField(value = textState, onValueChange = {
             textState = it
         })

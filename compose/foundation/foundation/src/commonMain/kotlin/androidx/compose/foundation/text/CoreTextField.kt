@@ -271,6 +271,7 @@ internal fun CoreTextField(
         focusRequester = focusRequester,
         interactionSource = interactionSource
     ) {
+        println("DIMA textFieldFocusModifier")
         if (state.hasFocus == it.isFocused) {
             return@textFieldFocusModifier
         }

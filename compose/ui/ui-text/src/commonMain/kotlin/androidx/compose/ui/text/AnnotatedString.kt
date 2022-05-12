@@ -62,6 +62,12 @@ class AnnotatedString internal constructor(
     ) : this(text, spanStyles, paragraphStyles, listOf())
 
     init {
+//        try {
+//            println("AnnotatedString(text=|$text|)")
+//            throw Error("temp")
+//        } catch (t:Throwable) {
+//            t.printStackTrace()
+//        }
         var lastStyleEnd = -1
         paragraphStyles.fastForEach { paragraphStyle ->
             require(paragraphStyle.start >= lastStyleEnd) { "ParagraphStyle should not overlap" }

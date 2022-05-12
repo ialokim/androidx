@@ -16,25 +16,20 @@
 
 package androidx.compose.ui.input.key
 
+import org.jetbrains.skiko.SkikoKeyboardEvent
+import org.jetbrains.skiko.SkikoKeyboardEventKind
+
 /*
 import java.awt.event.KeyEvent.KEY_PRESSED
 import java.awt.event.KeyEvent.KEY_RELEASED
 */
 
-// TODO: remove me.
-class NativeKeyEventStub
-
-
-/**
- * The native desktop [KeyEvent][KeyEventAwt].
- */
-actual typealias NativeKeyEvent = NativeKeyEventStub // java.awt.event.KeyEvent
+actual typealias NativeKeyEvent = SkikoKeyboardEvent // java.awt.event.KeyEvent
 
 /**
  * The key that was pressed.
  */
-actual val KeyEvent.key: Key
-    get() = TODO("implement native KeyEvent.key") // Key(nativeKeyEvent.keyCode, nativeKeyEvent.keyLocation)
+actual val KeyEvent.key: Key get() = Key(nativeKeyEvent.key.value)
 
 /**
  * The UTF16 value corresponding to the key event that was pressed. The unicode character
@@ -53,45 +48,41 @@ actual val KeyEvent.key: Key
  * second from the low-surrogates range (\uDC00-\uDFFF).
  */
 actual val KeyEvent.utf16CodePoint: Int
-    get() = TODO("implement native KeyEvent.utf16CodePoint") // nativeKeyEvent.keyChar.toInt()
+    get() = nativeKeyEvent.key.value.toInt()
+
 
 /**
  * The [type][KeyEventType] of key event.
  */
 actual val KeyEvent.type: KeyEventType
-    get() = TODO("implement native KeyEvent.type")
-/*
-    when (nativeKeyEvent.id) {
-        KEY_PRESSED -> KeyEventType.KeyDown
-        KEY_RELEASED -> KeyEventType.KeyUp
-        else -> KeyEventType.Unknown
-    }
-*/
+    get() =
+        when (nativeKeyEvent.kind) {
+            SkikoKeyboardEventKind.DOWN -> KeyEventType.KeyDown
+            SkikoKeyboardEventKind.UP -> KeyEventType.KeyUp
+            SkikoKeyboardEventKind.TYPE -> KeyEventType.Unknown
+            SkikoKeyboardEventKind.UNKNOWN -> KeyEventType.Unknown
+        }
 
 /**
  * Indicates whether the Alt key is pressed.
  */
-actual val KeyEvent.isAltPressed: Boolean
-    get() = TODO("implement native KeyEvent.isAltPressed")
+actual val KeyEvent.isAltPressed: Boolean get() = false
         // nativeKeyEvent.isAltDown || nativeKeyEvent.isAltGraphDown
 
 /**
  * Indicates whether the Ctrl key is pressed.
  */
-actual val KeyEvent.isCtrlPressed: Boolean
-    get() = TODO("implement native KeyEvent.isCtrlPressed")
+actual val KeyEvent.isCtrlPressed: Boolean get() = false
         // nativeKeyEvent.isControlDown
 
 /**
  * Indicates whether the Meta key is pressed.
  */
-actual val KeyEvent.isMetaPressed: Boolean
-    get() = TODO("implement native KeyEvent.isMetaPressed")
+actual val KeyEvent.isMetaPressed: Boolean get() = false
         // nativeKeyEvent.isMetaDown
 
 /**
  * Indicates whether the Shift key is pressed.
  */
-actual val KeyEvent.isShiftPressed: Boolean
-    get() = TODO("implement native KeyEvent.isShiftPressed")
+actual val KeyEvent.isShiftPressed: Boolean get() = false
         // nativeKeyEvent.isShiftDown

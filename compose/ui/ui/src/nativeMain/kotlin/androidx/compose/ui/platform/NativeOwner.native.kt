@@ -24,35 +24,18 @@ import androidx.compose.ui.input.key.type
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.PointerIconDefaults
 
-internal actual fun sendKeyEvent(
-    platformInputService: PlatformInput,
-    keyInputModifier: KeyInputModifier,
-    keyEvent: KeyEvent
-): Boolean {
-    TODO("implement native sendKeyEvent")
-/*
-    when {
-        keyEvent.nativeKeyEvent.id == java.awt.event.KeyEvent.KEY_TYPED ->
-            platformInputService.charKeyPressed = true
-        keyEvent.type == KeyEventType.KeyUp ->
-            platformInputService.charKeyPressed = false
-    }
-
-    return keyInputModifier.processKeyInput(keyEvent)
-*/
-}
 
 internal actual fun setPointerIcon(
     containerCursor: PlatformComponentWithCursor?,
     icon: PointerIcon?
 ) {
-    println("TODO: implement setPointerIcon for Native")
+//    println("TODO: implement setPointerIcon for Native")
 }
 
 internal actual fun commitPointerIcon(
     containerCursor: PlatformComponentWithCursor?
 ) {
-    println("TODO: implement commitPointerIcon for Native")
+//    println("TODO: implement commitPointerIcon for Native")
 }
 
 @OptIn(ExperimentalComposeUiApi::class)

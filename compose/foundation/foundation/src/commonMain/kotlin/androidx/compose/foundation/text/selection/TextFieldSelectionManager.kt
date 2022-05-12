@@ -168,6 +168,7 @@ internal class TextFieldSelectionManager(
         }
 
         override fun onStart(startPoint: Offset) {
+            println("DIMA: touchSelectionObserver onStart")
             if (draggingHandle != null) return
             // While selecting by long-press-dragging, the "end" of the selection is always the one
             // being controlled by the drag.
@@ -293,6 +294,7 @@ internal class TextFieldSelectionManager(
             downPosition: Offset,
             adjustment: SelectionAdjustment
         ): Boolean {
+            println("DIMA TextFieldSelectionManager fun onStart")
             focusRequester?.requestFocus()
 
             dragBeginPosition = downPosition

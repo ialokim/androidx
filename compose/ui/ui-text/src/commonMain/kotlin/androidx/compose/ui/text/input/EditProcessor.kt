@@ -107,8 +107,10 @@ class EditProcessor {
      * @return the [TextFieldValue] representation of the final buffer state.
      */
     fun apply(editCommands: List<EditCommand>): TextFieldValue {
+//        println("DIMA before anStr.text: ${mBuffer.toAnnotatedString()}")
+//        println("editCommands: $editCommands")
         editCommands.fastForEach { it.applyTo(mBuffer) }
-
+//        println("DIMA after  anStr.text: ${mBuffer.toAnnotatedString()}")
         val newState = TextFieldValue(
             annotatedString = mBuffer.toAnnotatedString(),
             selection = mBuffer.selection,

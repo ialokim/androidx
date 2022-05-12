@@ -19,9 +19,6 @@ package androidx.compose.ui.input.key
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.input.key.Key.Companion.Number
 import java.awt.event.KeyEvent
-import java.awt.event.KeyEvent.KEY_LOCATION_LEFT
-import java.awt.event.KeyEvent.KEY_LOCATION_NUMPAD
-import java.awt.event.KeyEvent.KEY_LOCATION_RIGHT
 import java.awt.event.KeyEvent.KEY_LOCATION_STANDARD
 import androidx.compose.ui.util.unpackInt1
 
@@ -38,7 +35,7 @@ actual value class Key(val keyCode: Long) {
     actual companion object {
         /** Unknown key. */
         @ExperimentalComposeUiApi
-        actual val Unknown = Key(KeyEvent.VK_UNDEFINED)
+        actual val Unknown = Key(0)
 
         /**
          * Home key.
@@ -46,11 +43,11 @@ actual value class Key(val keyCode: Long) {
          * This key is handled by the framework and is never delivered to applications.
          */
         @ExperimentalComposeUiApi
-        actual val Home = Key(KeyEvent.VK_HOME)
+        actual val Home = Key(0x24)
 
         /** Help key. */
         @ExperimentalComposeUiApi
-        actual val Help = Key(KeyEvent.VK_HELP)
+        actual val Help = Key(0x9C)
 
         /**
          * Up Arrow Key / Directional Pad Up key.
@@ -58,7 +55,7 @@ actual value class Key(val keyCode: Long) {
          * May also be synthesized from trackball motions.
          */
         @ExperimentalComposeUiApi
-        actual val DirectionUp = Key(KeyEvent.VK_UP)
+        actual val DirectionUp = Key(0x26)
 
         /**
          * Down Arrow Key / Directional Pad Down key.
@@ -66,7 +63,7 @@ actual value class Key(val keyCode: Long) {
          * May also be synthesized from trackball motions.
          */
         @ExperimentalComposeUiApi
-        actual val DirectionDown = Key(KeyEvent.VK_DOWN)
+        actual val DirectionDown = Key(0x28)
 
         /**
          * Left Arrow Key / Directional Pad Left key.
@@ -74,7 +71,7 @@ actual value class Key(val keyCode: Long) {
          * May also be synthesized from trackball motions.
          */
         @ExperimentalComposeUiApi
-        actual val DirectionLeft = Key(KeyEvent.VK_LEFT)
+        actual val DirectionLeft = Key(0x25)
 
         /**
          * Right Arrow Key / Directional Pad Right key.
@@ -82,207 +79,207 @@ actual value class Key(val keyCode: Long) {
          * May also be synthesized from trackball motions.
          */
         @ExperimentalComposeUiApi
-        actual val DirectionRight = Key(KeyEvent.VK_RIGHT)
+        actual val DirectionRight = Key(0x27)
 
         /** '0' key. */
         @ExperimentalComposeUiApi
-        actual val Zero = Key(KeyEvent.VK_0)
+        actual val Zero = Key(0x30)
 
         /** '1' key. */
         @ExperimentalComposeUiApi
-        actual val One = Key(KeyEvent.VK_1)
+        actual val One = Key(0x31)
 
         /** '2' key. */
         @ExperimentalComposeUiApi
-        actual val Two = Key(KeyEvent.VK_2)
+        actual val Two = Key(0x32)
 
         /** '3' key. */
         @ExperimentalComposeUiApi
-        actual val Three = Key(KeyEvent.VK_3)
+        actual val Three = Key(0x33)
 
         /** '4' key. */
         @ExperimentalComposeUiApi
-        actual val Four = Key(KeyEvent.VK_4)
+        actual val Four = Key(0x34)
 
         /** '5' key. */
         @ExperimentalComposeUiApi
-        actual val Five = Key(KeyEvent.VK_5)
+        actual val Five = Key(0x35)
 
         /** '6' key. */
         @ExperimentalComposeUiApi
-        actual val Six = Key(KeyEvent.VK_6)
+        actual val Six = Key(0x36)
 
         /** '7' key. */
         @ExperimentalComposeUiApi
-        actual val Seven = Key(KeyEvent.VK_7)
+        actual val Seven = Key(0x37)
 
         /** '8' key. */
         @ExperimentalComposeUiApi
-        actual val Eight = Key(KeyEvent.VK_8)
+        actual val Eight = Key(0x38)
 
         /** '9' key. */
         @ExperimentalComposeUiApi
-        actual val Nine = Key(KeyEvent.VK_9)
+        actual val Nine = Key(0x39)
 
         /** '+' key. */
         @ExperimentalComposeUiApi
-        actual val Plus = Key(KeyEvent.VK_PLUS)
+        actual val Plus = Key(0x0209)
 
         /** '-' key. */
         @ExperimentalComposeUiApi
-        actual val Minus = Key(KeyEvent.VK_MINUS)
+        actual val Minus = Key(0x2D)
 
         /** '*' key. */
         @ExperimentalComposeUiApi
-        actual val Multiply = Key(KeyEvent.VK_MULTIPLY)
+        actual val Multiply = Key(0x6A)
 
         /** '=' key. */
         @ExperimentalComposeUiApi
-        actual val Equals = Key(KeyEvent.VK_EQUALS)
+        actual val Equals = Key(0x3D)
 
         /** '#' key. */
         @ExperimentalComposeUiApi
-        actual val Pound = Key(KeyEvent.VK_NUMBER_SIGN)
+        actual val Pound = Key(0x0208)
 
         /** 'A' key. */
         @ExperimentalComposeUiApi
-        actual val A = Key(KeyEvent.VK_A)
+        actual val A = Key(0x41)
 
         /** 'B' key. */
         @ExperimentalComposeUiApi
-        actual val B = Key(KeyEvent.VK_B)
+        actual val B = Key(0x42)
 
         /** 'C' key. */
         @ExperimentalComposeUiApi
-        actual val C = Key(KeyEvent.VK_C)
+        actual val C = Key(0x43)
 
         /** 'D' key. */
         @ExperimentalComposeUiApi
-        actual val D = Key(KeyEvent.VK_D)
+        actual val D = Key(0x44)
 
         /** 'E' key. */
         @ExperimentalComposeUiApi
-        actual val E = Key(KeyEvent.VK_E)
+        actual val E = Key(0x45)
 
         /** 'F' key. */
         @ExperimentalComposeUiApi
-        actual val F = Key(KeyEvent.VK_F)
+        actual val F = Key(0x46)
 
         /** 'G' key. */
         @ExperimentalComposeUiApi
-        actual val G = Key(KeyEvent.VK_G)
+        actual val G = Key(0x47)
 
         /** 'H' key. */
         @ExperimentalComposeUiApi
-        actual val H = Key(KeyEvent.VK_H)
+        actual val H = Key(0x48)
 
         /** 'I' key. */
         @ExperimentalComposeUiApi
-        actual val I = Key(KeyEvent.VK_I)
+        actual val I = Key(0x49)
 
         /** 'J' key. */
         @ExperimentalComposeUiApi
-        actual val J = Key(KeyEvent.VK_J)
+        actual val J = Key(0x4A)
 
         /** 'K' key. */
         @ExperimentalComposeUiApi
-        actual val K = Key(KeyEvent.VK_K)
+        actual val K = Key(0x4B)
 
         /** 'L' key. */
         @ExperimentalComposeUiApi
-        actual val L = Key(KeyEvent.VK_L)
+        actual val L = Key(0x4C)
 
         /** 'M' key. */
         @ExperimentalComposeUiApi
-        actual val M = Key(KeyEvent.VK_M)
+        actual val M = Key(0x4D)
 
         /** 'N' key. */
         @ExperimentalComposeUiApi
-        actual val N = Key(KeyEvent.VK_N)
+        actual val N = Key(0x4E)
 
         /** 'O' key. */
         @ExperimentalComposeUiApi
-        actual val O = Key(KeyEvent.VK_O)
+        actual val O = Key(0x4F)
 
         /** 'P' key. */
         @ExperimentalComposeUiApi
-        actual val P = Key(KeyEvent.VK_P)
+        actual val P = Key(0x50)
 
         /** 'Q' key. */
         @ExperimentalComposeUiApi
-        actual val Q = Key(KeyEvent.VK_Q)
+        actual val Q = Key(0x51)
 
         /** 'R' key. */
         @ExperimentalComposeUiApi
-        actual val R = Key(KeyEvent.VK_R)
+        actual val R = Key(0x52)
 
         /** 'S' key. */
         @ExperimentalComposeUiApi
-        actual val S = Key(KeyEvent.VK_S)
+        actual val S = Key(0x53)
 
         /** 'T' key. */
         @ExperimentalComposeUiApi
-        actual val T = Key(KeyEvent.VK_T)
+        actual val T = Key(0x54)
 
         /** 'U' key. */
         @ExperimentalComposeUiApi
-        actual val U = Key(KeyEvent.VK_U)
+        actual val U = Key(0x55)
 
         /** 'V' key. */
         @ExperimentalComposeUiApi
-        actual val V = Key(KeyEvent.VK_V)
+        actual val V = Key(0x56)
 
         /** 'W' key. */
         @ExperimentalComposeUiApi
-        actual val W = Key(KeyEvent.VK_W)
+        actual val W = Key(0x57)
 
         /** 'X' key. */
         @ExperimentalComposeUiApi
-        actual val X = Key(KeyEvent.VK_X)
+        actual val X = Key(0x58)
 
         /** 'Y' key. */
         @ExperimentalComposeUiApi
-        actual val Y = Key(KeyEvent.VK_Y)
+        actual val Y = Key(0x59)
 
         /** 'Z' key. */
         @ExperimentalComposeUiApi
-        actual val Z = Key(KeyEvent.VK_Z)
+        actual val Z = Key(0x5A)
 
         /** ',' key. */
         @ExperimentalComposeUiApi
-        actual val Comma = Key(KeyEvent.VK_COMMA)
+        actual val Comma = Key(0x2C)
 
         /** '.' key. */
         @ExperimentalComposeUiApi
-        actual val Period = Key(KeyEvent.VK_PERIOD)
+        actual val Period = Key(0x2E)
 
         /** Left Alt modifier key. */
         @ExperimentalComposeUiApi
-        actual val AltLeft = Key(KeyEvent.VK_ALT, KEY_LOCATION_LEFT)
+        actual val AltLeft = Key(0x12, 2)
 
         /** Right Alt modifier key. */
         @ExperimentalComposeUiApi
-        actual val AltRight = Key(KeyEvent.VK_ALT, KEY_LOCATION_RIGHT)
+        actual val AltRight = Key(0x12, 3)
 
         /** Left Shift modifier key. */
         @ExperimentalComposeUiApi
-        actual val ShiftLeft = Key(KeyEvent.VK_SHIFT, KEY_LOCATION_LEFT)
+        actual val ShiftLeft = Key(0x10, 2)
 
         /** Right Shift modifier key. */
         @ExperimentalComposeUiApi
-        actual val ShiftRight = Key(KeyEvent.VK_SHIFT, KEY_LOCATION_RIGHT)
+        actual val ShiftRight = Key(0x10, 3)
 
         /** Tab key. */
         @ExperimentalComposeUiApi
-        actual val Tab = Key(KeyEvent.VK_TAB)
+        actual val Tab = Key('\t'.code)
 
         /** Space key. */
         @ExperimentalComposeUiApi
-        actual val Spacebar = Key(KeyEvent.VK_SPACE)
+        actual val Spacebar = Key(0x20)
 
         /** Enter key. */
         @ExperimentalComposeUiApi
-        actual val Enter = Key(KeyEvent.VK_ENTER)
+        actual val Enter = Key('\n'.code)
 
         /**
          * Backspace key.
@@ -290,7 +287,7 @@ actual value class Key(val keyCode: Long) {
          * Deletes characters before the insertion point, unlike [Delete].
          */
         @ExperimentalComposeUiApi
-        actual val Backspace = Key(KeyEvent.VK_BACK_SPACE)
+        actual val Backspace = Key('\b'.code)
 
         /**
          * Delete key.
@@ -298,39 +295,39 @@ actual value class Key(val keyCode: Long) {
          * Deletes characters ahead of the insertion point, unlike [Backspace].
          */
         @ExperimentalComposeUiApi
-        actual val Delete = Key(KeyEvent.VK_DELETE)
+        actual val Delete = Key(0x7F)
 
         /** Escape key. */
         @ExperimentalComposeUiApi
-        actual val Escape = Key(KeyEvent.VK_ESCAPE)
+        actual val Escape = Key(0x1B)
 
         /** Left Control modifier key. */
         @ExperimentalComposeUiApi
-        actual val CtrlLeft = Key(KeyEvent.VK_CONTROL, KEY_LOCATION_LEFT)
+        actual val CtrlLeft = Key(0x11, 2)
 
         /** Right Control modifier key. */
         @ExperimentalComposeUiApi
-        actual val CtrlRight = Key(KeyEvent.VK_CONTROL, KEY_LOCATION_RIGHT)
+        actual val CtrlRight = Key(0x11, 3)
 
         /** Caps Lock key. */
         @ExperimentalComposeUiApi
-        actual val CapsLock = Key(KeyEvent.VK_CAPS_LOCK)
+        actual val CapsLock = Key(0x14)
 
         /** Scroll Lock key. */
         @ExperimentalComposeUiApi
-        actual val ScrollLock = Key(KeyEvent.VK_SCROLL_LOCK)
+        actual val ScrollLock = Key(0x91)
 
         /** Left Meta modifier key. */
         @ExperimentalComposeUiApi
-        actual val MetaLeft = Key(KeyEvent.VK_META, KEY_LOCATION_LEFT)
+        actual val MetaLeft = Key(0x9D, 2)
 
         /** Right Meta modifier key. */
         @ExperimentalComposeUiApi
-        actual val MetaRight = Key(KeyEvent.VK_META, KEY_LOCATION_RIGHT)
+        actual val MetaRight = Key(0x9D, 3)
 
         /** System Request / Print Screen key. */
         @ExperimentalComposeUiApi
-        actual val PrintScreen = Key(KeyEvent.VK_PRINTSCREEN)
+        actual val PrintScreen = Key(0x9A)
 
         /**
          * Insert key.
@@ -338,107 +335,107 @@ actual value class Key(val keyCode: Long) {
          * Toggles insert / overwrite edit mode.
          */
         @ExperimentalComposeUiApi
-        actual val Insert = Key(KeyEvent.VK_INSERT)
+        actual val Insert = Key(0x9B)
 
         /** Cut key. */
         @ExperimentalComposeUiApi
-        actual val Cut = Key(KeyEvent.VK_CUT)
+        actual val Cut = Key(0xFFD1)
 
         /** Copy key. */
         @ExperimentalComposeUiApi
-        actual val Copy = Key(KeyEvent.VK_COPY)
+        actual val Copy = Key(0xFFCD)
 
         /** Paste key. */
         @ExperimentalComposeUiApi
-        actual val Paste = Key(KeyEvent.VK_PASTE)
+        actual val Paste = Key(0xFFCF)
 
         /** '`' (backtick) key. */
         @ExperimentalComposeUiApi
-        actual val Grave = Key(KeyEvent.VK_BACK_QUOTE)
+        actual val Grave = Key(0xC0)
 
         /** '[' key. */
         @ExperimentalComposeUiApi
-        actual val LeftBracket = Key(KeyEvent.VK_OPEN_BRACKET)
+        actual val LeftBracket = Key(0x5B)
 
         /** ']' key. */
         @ExperimentalComposeUiApi
-        actual val RightBracket = Key(KeyEvent.VK_CLOSE_BRACKET)
+        actual val RightBracket = Key(0x5D)
 
         /** '/' key. */
         @ExperimentalComposeUiApi
-        actual val Slash = Key(KeyEvent.VK_SLASH)
+        actual val Slash = Key(0x2F)
 
         /** '\' key. */
         @ExperimentalComposeUiApi
-        actual val Backslash = Key(KeyEvent.VK_BACK_SLASH)
+        actual val Backslash = Key(0x5C)
 
         /** ';' key. */
         @ExperimentalComposeUiApi
-        actual val Semicolon = Key(KeyEvent.VK_SEMICOLON)
+        actual val Semicolon = Key(0x3B)
 
         /** ''' (apostrophe) key. */
         @ExperimentalComposeUiApi
-        actual val Apostrophe = Key(KeyEvent.VK_QUOTE)
+        actual val Apostrophe = Key(0xDE)
 
         /** '@' key. */
         @ExperimentalComposeUiApi
-        actual val At = Key(KeyEvent.VK_AT)
+        actual val At = Key(0x0200)
 
         /** Page Up key. */
         @ExperimentalComposeUiApi
-        actual val PageUp = Key(KeyEvent.VK_PAGE_UP)
+        actual val PageUp = Key(0x21)
 
         /** Page Down key. */
         @ExperimentalComposeUiApi
-        actual val PageDown = Key(KeyEvent.VK_PAGE_DOWN)
+        actual val PageDown = Key(0x22)
 
         /** F1 key. */
         @ExperimentalComposeUiApi
-        actual val F1 = Key(KeyEvent.VK_F1)
+        actual val F1 = Key(0x70)
 
         /** F2 key. */
         @ExperimentalComposeUiApi
-        actual val F2 = Key(KeyEvent.VK_F2)
+        actual val F2 = Key(0x71)
 
         /** F3 key. */
         @ExperimentalComposeUiApi
-        actual val F3 = Key(KeyEvent.VK_F3)
+        actual val F3 = Key(0x72)
 
         /** F4 key. */
         @ExperimentalComposeUiApi
-        actual val F4 = Key(KeyEvent.VK_F4)
+        actual val F4 = Key(0x73)
 
         /** F5 key. */
         @ExperimentalComposeUiApi
-        actual val F5 = Key(KeyEvent.VK_F5)
+        actual val F5 = Key(0x74)
 
         /** F6 key. */
         @ExperimentalComposeUiApi
-        actual val F6 = Key(KeyEvent.VK_F6)
+        actual val F6 = Key(0x75)
 
         /** F7 key. */
         @ExperimentalComposeUiApi
-        actual val F7 = Key(KeyEvent.VK_F7)
+        actual val F7 = Key(0x76)
 
         /** F8 key. */
         @ExperimentalComposeUiApi
-        actual val F8 = Key(KeyEvent.VK_F8)
+        actual val F8 = Key(0x77)
 
         /** F9 key. */
         @ExperimentalComposeUiApi
-        actual val F9 = Key(KeyEvent.VK_F9)
+        actual val F9 = Key(0x78)
 
         /** F10 key. */
         @ExperimentalComposeUiApi
-        actual val F10 = Key(KeyEvent.VK_F10)
+        actual val F10 = Key(0x79)
 
         /** F11 key. */
         @ExperimentalComposeUiApi
-        actual val F11 = Key(KeyEvent.VK_F11)
+        actual val F11 = Key(0x7A)
 
         /** F12 key. */
         @ExperimentalComposeUiApi
-        actual val F12 = Key(KeyEvent.VK_F12)
+        actual val F12 = Key(0x7B)
 
         /**
          * Num Lock key.
@@ -447,92 +444,92 @@ actual value class Key(val keyCode: Long) {
          * This key alters the behavior of other keys on the numeric keypad.
          */
         @ExperimentalComposeUiApi
-        actual val NumLock = Key(KeyEvent.VK_NUM_LOCK, KEY_LOCATION_NUMPAD)
+        actual val NumLock = Key(0x90, 4)
 
         /** Numeric keypad '0' key. */
         @ExperimentalComposeUiApi
-        actual val NumPad0 = Key(KeyEvent.VK_NUMPAD0, KEY_LOCATION_NUMPAD)
+        actual val NumPad0 = Key(0x60, 4)
 
         /** Numeric keypad '1' key. */
         @ExperimentalComposeUiApi
-        actual val NumPad1 = Key(KeyEvent.VK_NUMPAD1, KEY_LOCATION_NUMPAD)
+        actual val NumPad1 = Key(0x61, 4)
 
         /** Numeric keypad '2' key. */
         @ExperimentalComposeUiApi
-        actual val NumPad2 = Key(KeyEvent.VK_NUMPAD2, KEY_LOCATION_NUMPAD)
+        actual val NumPad2 = Key(0x62, 4)
 
         /** Numeric keypad '3' key. */
         @ExperimentalComposeUiApi
-        actual val NumPad3 = Key(KeyEvent.VK_NUMPAD3, KEY_LOCATION_NUMPAD)
+        actual val NumPad3 = Key(0x63, 4)
 
         /** Numeric keypad '4' key. */
         @ExperimentalComposeUiApi
-        actual val NumPad4 = Key(KeyEvent.VK_NUMPAD4, KEY_LOCATION_NUMPAD)
+        actual val NumPad4 = Key(0x64, 4)
 
         /** Numeric keypad '5' key. */
         @ExperimentalComposeUiApi
-        actual val NumPad5 = Key(KeyEvent.VK_NUMPAD5, KEY_LOCATION_NUMPAD)
+        actual val NumPad5 = Key(0x65, 4)
 
         /** Numeric keypad '6' key. */
         @ExperimentalComposeUiApi
-        actual val NumPad6 = Key(KeyEvent.VK_NUMPAD6, KEY_LOCATION_NUMPAD)
+        actual val NumPad6 = Key(0x66, 4)
 
         /** Numeric keypad '7' key. */
         @ExperimentalComposeUiApi
-        actual val NumPad7 = Key(KeyEvent.VK_NUMPAD7, KEY_LOCATION_NUMPAD)
+        actual val NumPad7 = Key(0x67, 4)
 
         /** Numeric keypad '8' key. */
         @ExperimentalComposeUiApi
-        actual val NumPad8 = Key(KeyEvent.VK_NUMPAD8, KEY_LOCATION_NUMPAD)
+        actual val NumPad8 = Key(0x68, 4)
 
         /** Numeric keypad '9' key. */
         @ExperimentalComposeUiApi
-        actual val NumPad9 = Key(KeyEvent.VK_NUMPAD9, KEY_LOCATION_NUMPAD)
+        actual val NumPad9 = Key(0x69, 4)
 
         /** Numeric keypad '/' key (for division). */
         @ExperimentalComposeUiApi
-        actual val NumPadDivide = Key(KeyEvent.VK_DIVIDE, KEY_LOCATION_NUMPAD)
+        actual val NumPadDivide = Key(0x6F, 4)
 
         /** Numeric keypad '*' key (for multiplication). */
         @ExperimentalComposeUiApi
-        actual val NumPadMultiply = Key(KeyEvent.VK_MULTIPLY, KEY_LOCATION_NUMPAD)
+        actual val NumPadMultiply = Key(0x6A, 4)
 
         /** Numeric keypad '-' key (for subtraction). */
         @ExperimentalComposeUiApi
-        actual val NumPadSubtract = Key(KeyEvent.VK_SUBTRACT, KEY_LOCATION_NUMPAD)
+        actual val NumPadSubtract = Key(0x6D, 4)
 
         /** Numeric keypad '+' key (for addition). */
         @ExperimentalComposeUiApi
-        actual val NumPadAdd = Key(KeyEvent.VK_ADD, KEY_LOCATION_NUMPAD)
+        actual val NumPadAdd = Key(0x6B, 4)
 
         /** Numeric keypad '.' key (for decimals or digit grouping). */
         @ExperimentalComposeUiApi
-        actual val NumPadDot = Key(KeyEvent.VK_PERIOD, KEY_LOCATION_NUMPAD)
+        actual val NumPadDot = Key(0x2E, 4)
 
         /** Numeric keypad ',' key (for decimals or digit grouping). */
         @ExperimentalComposeUiApi
-        actual val NumPadComma = Key(KeyEvent.VK_COMMA, KEY_LOCATION_NUMPAD)
+        actual val NumPadComma = Key(0x2C, 4)
 
         /** Numeric keypad Enter key. */
         @ExperimentalComposeUiApi
-        actual val NumPadEnter = Key(KeyEvent.VK_ENTER, KEY_LOCATION_NUMPAD)
+        actual val NumPadEnter = Key('\n'.code, 4)
 
         /** Numeric keypad '=' key. */
         @ExperimentalComposeUiApi
-        actual val NumPadEquals = Key(KeyEvent.VK_EQUALS, KEY_LOCATION_NUMPAD)
+        actual val NumPadEquals = Key(0x3D, 4)
 
         /** Numeric keypad '(' key. */
         @ExperimentalComposeUiApi
-        actual val NumPadLeftParenthesis = Key(KeyEvent.VK_LEFT_PARENTHESIS, KEY_LOCATION_NUMPAD)
+        actual val NumPadLeftParenthesis = Key(0x0207, 4)
 
         /** Numeric keypad ')' key. */
         @ExperimentalComposeUiApi
-        actual val NumPadRightParenthesis = Key(KeyEvent.VK_RIGHT_PARENTHESIS, KEY_LOCATION_NUMPAD)
+        actual val NumPadRightParenthesis = Key(0x020A, 4)
 
         @ExperimentalComposeUiApi
-        actual val MoveHome = Key(KeyEvent.VK_HOME)
+        actual val MoveHome = Key(0x24)
         @ExperimentalComposeUiApi
-        actual val MoveEnd = Key(KeyEvent.VK_END)
+        actual val MoveEnd = Key(0x23)
 
         // Unsupported Keys. These keys will never be sent by the desktop. However we need unique
         // keycodes so that these constants can be used in a when statement without a warning.

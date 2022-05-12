@@ -177,9 +177,7 @@ class EditingBuffer(
         if (start > end) {
             throw IllegalArgumentException("Do not set reversed range: $start > $end")
         }
-
         gapBuffer.replace(start, end, text)
-
         // On Android, all text modification APIs also provides explicit cursor location. On the
         // hand, desktop application usually doesn't. So, here tentatively move the cursor to the
         // end offset of the editing area for desktop like application. In case of Android,

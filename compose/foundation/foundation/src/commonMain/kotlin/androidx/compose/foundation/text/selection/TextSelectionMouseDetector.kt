@@ -89,6 +89,7 @@ internal suspend fun PointerInputScope.mouseSelectionDetector(
             val clicksCounter = ClicksCounter(viewConfiguration)
             while (true) {
                 val down = awaitMouseEventDown()
+                println("DIMA down: $down")
                 clicksCounter.update(down)
                 val downChange = down.changes[0]
                 if (down.keyboardModifiers.isShiftPressed) {

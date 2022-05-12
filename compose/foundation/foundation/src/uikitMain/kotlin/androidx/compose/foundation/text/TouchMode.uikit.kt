@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 The Android Open Source Project
+ * Copyright 2022 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,17 +16,4 @@
 
 package androidx.compose.foundation.text
 
-internal actual fun StringBuilder.appendCodePointX(codePoint: Int): StringBuilder =
-    apply {
-        appendCodePoint(codePoint)
-    }
-
-// TODO: there is an appendCodePoint in K/N stdlib, but it is internal.
-private fun StringBuilder.appendCodePoint(codePoint: Int) {
-    if (codePoint < Char.MIN_SUPPLEMENTARY_CODE_POINT) {
-        append(codePoint.toChar())
-    } else {
-        append(Char.MIN_HIGH_SURROGATE + ((codePoint - 0x10000) shr 10))
-        append(Char.MIN_LOW_SURROGATE + (codePoint and 0x3ff))
-    }
-}
+internal actual val isInTouchMode = true
