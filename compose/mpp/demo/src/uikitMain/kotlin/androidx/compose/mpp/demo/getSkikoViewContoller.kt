@@ -51,80 +51,82 @@ fun getSkikoViewContoller() = Application("Compose/Native sample") {
     val clipboard = LocalClipboardManager.current
     val uriHandler = LocalUriHandler.current
     Column {
-        Box(
-            modifier = Modifier
-                .padding(16.dp)
-                .background(color = if (selected) Color.Gray else Color.Red)
-                .width(100.dp).height(100.dp)
-                .clickable {
-                    println("Red box: clicked")
-                }
-        ) {
+        if (false) {
             Box(
                 modifier = Modifier
                     .padding(16.dp)
-                    .background(color = if (tick) Color.Green else Color.Blue)
-                    .width(20.dp).height(20.dp)
+                    .background(color = if (selected) Color.Gray else Color.Red)
+                    .width(100.dp).height(100.dp)
                     .clickable {
-                        println("Small box: clicked")
+                        println("Red box: clicked")
                     }
-            )
-        }
-        Spacer(
-            Modifier.width(200.dp)
-                .height(if (clutz) 4.dp else 12.dp)
-                .background(color = if (clutz) Color.DarkGray else Color.Magenta)
-        )
-        Button(
-            modifier = Modifier
-                .padding(16.dp),
-            onClick = {
-                println("Button clicked!")
-                tick = !tick
+            ) {
+                Box(
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .background(color = if (tick) Color.Green else Color.Blue)
+                        .width(20.dp).height(20.dp)
+                        .clickable {
+                            println("Small box: clicked")
+                        }
+                )
             }
-        ) {
-            Text(if (switched) "🦑 press 🐙" else "Press me!")
-        }
-        Row {
-            RadioButton(
+            Spacer(
+                Modifier.width(200.dp)
+                    .height(if (clutz) 4.dp else 12.dp)
+                    .background(color = if (clutz) Color.DarkGray else Color.Magenta)
+            )
+            Button(
                 modifier = Modifier
                     .padding(16.dp),
-                selected = selected,
                 onClick = {
-                    println("RadioButton clicked!")
-                    selected = !selected
+                    println("Button clicked!")
+                    tick = !tick
                 }
-            )
-
-            Checkbox(
-                checked = clutz,
-                modifier = Modifier.padding(16.dp),
-                onCheckedChange = { clutz = !clutz }
-            )
-        }
-        Switch(
-            modifier = Modifier
-                .padding(16.dp),
-            checked = switched,
-            onCheckedChange = { switched = it }
-        )
-        Row {
-            Button(
-                modifier = Modifier.padding(16.dp),
-                onClick = {
-                    uriHandler.openUri("https://kotlinlang.org")
-                },
             ) {
-                Text("Open URL")
+                Text(if (switched) "🦑 press 🐙" else "Press me!")
             }
-            Button(
-                modifier = Modifier.padding(16.dp),
-                onClick = {
-                    text = clipboard.getText()?.text ?: "clipboard is empty"
-                },
-                colors = ButtonDefaults.buttonColors(backgroundColor = Color.Gray)
-            ) {
-                Text(text)
+            Row {
+                RadioButton(
+                    modifier = Modifier
+                        .padding(16.dp),
+                    selected = selected,
+                    onClick = {
+                        println("RadioButton clicked!")
+                        selected = !selected
+                    }
+                )
+
+                Checkbox(
+                    checked = clutz,
+                    modifier = Modifier.padding(16.dp),
+                    onCheckedChange = { clutz = !clutz }
+                )
+            }
+            Switch(
+                modifier = Modifier
+                    .padding(16.dp),
+                checked = switched,
+                onCheckedChange = { switched = it }
+            )
+            Row {
+                Button(
+                    modifier = Modifier.padding(16.dp),
+                    onClick = {
+                        uriHandler.openUri("https://kotlinlang.org")
+                    },
+                ) {
+                    Text("Open URL")
+                }
+                Button(
+                    modifier = Modifier.padding(16.dp),
+                    onClick = {
+                        text = clipboard.getText()?.text ?: "clipboard is empty"
+                    },
+                    colors = ButtonDefaults.buttonColors(backgroundColor = Color.Gray)
+                ) {
+                    Text(text)
+                }
             }
         }
         Text("hi iOS")
