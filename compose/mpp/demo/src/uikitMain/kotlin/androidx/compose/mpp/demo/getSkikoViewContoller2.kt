@@ -16,41 +16,26 @@
 
 package androidx.compose.mpp.demo
 
-import kotlin.math.PI
-import kotlin.math.cos
-import kotlin.math.sin
 import org.jetbrains.skia.Canvas
 import org.jetbrains.skia.FontMgr
-import org.jetbrains.skia.Paint
-import org.jetbrains.skia.PaintMode
-import org.jetbrains.skia.Rect
 import org.jetbrains.skia.paragraph.FontCollection
 import org.jetbrains.skia.paragraph.ParagraphBuilder
 import org.jetbrains.skia.paragraph.ParagraphStyle
 import org.jetbrains.skia.paragraph.TextStyle
 import org.jetbrains.skiko.CursorManager
-import org.jetbrains.skiko.FPSCounter
 import org.jetbrains.skiko.GenericSkikoView
-import org.jetbrains.skiko.OS
-import org.jetbrains.skiko.PredefinedCursors
 import org.jetbrains.skiko.SkiaLayer
 import org.jetbrains.skiko.SkikoGestureEvent
 import org.jetbrains.skiko.SkikoGestureEventKind
-import org.jetbrains.skiko.SkikoGestureEventState
 import org.jetbrains.skiko.SkikoInputEvent
-import org.jetbrains.skiko.SkikoInputModifiers
 import org.jetbrains.skiko.SkikoKey
 import org.jetbrains.skiko.SkikoKeyboardEvent
 import org.jetbrains.skiko.SkikoKeyboardEventKind
 import org.jetbrains.skiko.SkikoPointerEvent
-import org.jetbrains.skiko.SkikoPointerEventKind
 import org.jetbrains.skiko.SkikoTouchEvent
-import org.jetbrains.skiko.SkikoTouchEventKind
 import org.jetbrains.skiko.SkikoUIView
 import org.jetbrains.skiko.SkikoView
 import org.jetbrains.skiko.SkikoViewController
-import org.jetbrains.skiko.currentSystemTheme
-import org.jetbrains.skiko.hostOs
 import platform.UIKit.UIViewController
 
 fun getSkikoViewContoller2(): UIViewController = SkikoViewController(
@@ -64,44 +49,27 @@ fun getSkikoViewContoller2(): UIViewController = SkikoViewController(
 
 fun makeApp(skiaLayer: SkiaLayer) = Clocks(skiaLayer)
 
-class Clocks(private val layer: SkiaLayer): SkikoView {
+class Clocks(private val layer: SkiaLayer) : SkikoView {
     private val cursorManager = CursorManager()
-    private val withFps = true
-    private val fpsCounter = FPSCounter()
-    private val platformYOffset = if (hostOs == OS.Ios) 50f else 5f
-    private var frame = 0
-    private var xpos = 0.0
-    private var ypos = 0.0
     private var xOffset = 0.0
     private var yOffset = 0.0
     private var scale = 1.0
-    private var k = scale
-    private var rotate = 0.0
     private val fontCollection = FontCollection()
         .setDefaultFontManager(FontMgr.default)
     private val style = ParagraphStyle()
     private var inputText = ""
 
     override fun onRender(canvas: Canvas, width: Int, height: Int, nanoTime: Long) {
-        if (withFps) fpsCounter.tick()
         canvas.translate(xOffset.toFloat(), yOffset.toFloat())
         canvas.scale(scale.toFloat(), scale.toFloat())
-        canvas.rotate(rotate.toFloat(), (width / 2).toFloat(), (height / 2).toFloat())
         val input = ParagraphBuilder(style, fontCollection)
             .pushStyle(TextStyle().setColor(0xFF000000.toInt()))
-            .addText("TextInput: $inputText")
+            .addText("TextInput2: $inputText")
             .popStyle()
             .build()
         input.layout(Float.POSITIVE_INFINITY)
-        input.paint(canvas, 5f, platformYOffset + 20f)
+        input.paint(canvas, 5f, 100f)
         canvas.resetMatrix()
-    }
-
-    private fun reset() {
-        xOffset = 0.0
-        yOffset = 0.0
-        rotate = 0.0
-        scale = 1.0
     }
 
     private fun inputTextDropLast() {
@@ -111,40 +79,11 @@ class Clocks(private val layer: SkiaLayer): SkikoView {
     }
 
     override fun onPointerEvent(event: SkikoPointerEvent) {
-        when (event.kind) {
-            SkikoPointerEventKind.DOWN,
-            SkikoPointerEventKind.MOVE -> {
-                if (event.x > 200) {
-                    cursorManager.setCursor(layer.component, PredefinedCursors.HAND)
-                } else {
-                    cursorManager.setCursor(layer.component, PredefinedCursors.DEFAULT)
-                }
-                xpos = event.x
-                ypos = event.y
-            }
-            SkikoPointerEventKind.DRAG -> {
-                xOffset += event.x - xpos
-                yOffset += event.y - ypos
-                xpos = event.x
-                ypos = event.y
-            }
-            SkikoPointerEventKind.SCROLL -> {
-                when (event.modifiers) {
-                    SkikoInputModifiers.CONTROL -> {
-                        rotate += if (event.deltaY < 0) -5.0 else 5.0
-                    }
-                    else -> {
-                        if (event.y != 0.0) {
-                            scale *= if (event.deltaY < 0) 0.9 else 1.1
-                        }
-                    }
-                }
-            }
-            else -> {}
-        }
+
     }
 
     override fun onInputEvent(event: SkikoInputEvent) {
+        println("event.input: ${event.input}")
         if (event.input != "\b") {
             inputText += event.input
         }
@@ -153,37 +92,6 @@ class Clocks(private val layer: SkiaLayer): SkikoView {
     override fun onKeyboardEvent(event: SkikoKeyboardEvent) {
         if (event.kind == SkikoKeyboardEventKind.DOWN) {
             when (event.key) {
-                SkikoKey.KEY_NUMPAD_ADD -> scale *= 1.1
-                SkikoKey.KEY_I -> {
-                    if (event.modifiers == SkikoInputModifiers.SHIFT) {
-                        scale *= 1.1
-                    }
-                }
-                SkikoKey.KEY_NUMPAD_SUBTRACT -> scale *= 0.9
-                SkikoKey.KEY_O -> {
-                    if (event.modifiers == SkikoInputModifiers.SHIFT) {
-                        scale *= 0.9
-                    }
-                }
-                SkikoKey.KEY_R -> {
-                    if (event.modifiers == SkikoInputModifiers.SHIFT) {
-                        rotate -= 5.0
-                    }
-                }
-                SkikoKey.KEY_L -> {
-                    if (event.modifiers == SkikoInputModifiers.SHIFT) {
-                        rotate += 5.0
-                    }
-                }
-                SkikoKey.KEY_NUMPAD_4,
-                SkikoKey.KEY_LEFT -> xOffset -= 5.0
-                SkikoKey.KEY_NUMPAD_8,
-                SkikoKey.KEY_UP -> yOffset -= 5.0
-                SkikoKey.KEY_NUMPAD_6,
-                SkikoKey.KEY_RIGHT -> xOffset += 5.0
-                SkikoKey.KEY_NUMPAD_2,
-                SkikoKey.KEY_DOWN -> yOffset += 5.0
-                SkikoKey.KEY_SPACE -> { reset() }
                 SkikoKey.KEY_BACKSPACE -> {
                     inputTextDropLast()
                 }
@@ -194,35 +102,9 @@ class Clocks(private val layer: SkiaLayer): SkikoView {
 
     override fun onTouchEvent(events: Array<SkikoTouchEvent>) {
         val event = events.first()
-        if (event.kind == SkikoTouchEventKind.STARTED) {
-            xpos = event.x
-            ypos = event.y
-        }
     }
 
     override fun onGestureEvent(event: SkikoGestureEvent) {
-        when (event.kind) {
-            SkikoGestureEventKind.TAP -> {
-                xpos = event.x
-                ypos = event.y
-            }
-            SkikoGestureEventKind.DOUBLETAP -> { reset() }
-            SkikoGestureEventKind.PINCH -> {
-                if (event.state == SkikoGestureEventState.STARTED) {
-                    k = scale
-                }
-                scale = k * event.scale
-            }
-            SkikoGestureEventKind.PAN -> {
-                xOffset += event.x - xpos
-                yOffset += event.y - ypos
-                xpos = event.x
-                ypos = event.y
-            }
-            SkikoGestureEventKind.ROTATION -> {
-                rotate = event.rotation * 180.0 / PI
-            }
-            else -> {}
-        }
+
     }
 }
