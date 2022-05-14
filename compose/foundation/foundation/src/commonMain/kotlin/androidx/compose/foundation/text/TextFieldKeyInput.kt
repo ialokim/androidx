@@ -24,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.input.key.KeyEvent
 import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.onInputEvent
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.input.key.utf16CodePoint
@@ -79,9 +80,15 @@ internal class TextFieldKeyInput(
             val text = StringBuilder().appendCodePointX(codePoint)//+93
                 .toString()
             CommitTextCommand(text, 1)
+//            null//todo
         } else {
             null
         }
+
+    fun processInput(input: String): Boolean {
+        CommitTextCommand(input, 1).apply()
+        return true
+    }
 
     fun process(event: KeyEvent): Boolean {
         typedCommand(event)?.let {
@@ -243,4 +250,5 @@ internal fun Modifier.textFieldKeyInput(
         onValueChange = onValueChange
     )
     Modifier.onKeyEvent(processor::process)
+        .onInputEvent(processor::processInput)
 }

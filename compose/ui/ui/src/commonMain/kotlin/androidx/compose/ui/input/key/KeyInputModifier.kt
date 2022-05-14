@@ -52,6 +52,15 @@ fun Modifier.onKeyEvent(onKeyEvent: (KeyEvent) -> Boolean): Modifier = inspectab
     KeyInputModifier(onKeyEvent = onKeyEvent, onPreviewKeyEvent = null)
 }
 
+fun Modifier.onInputEvent(onInput: (String) -> Boolean): Modifier = inspectable(
+    inspectorInfo = debugInspectorInfo {
+        name = "onKeyEvent"
+        properties["onInput"] = onInput
+    }
+) {
+    KeyInputModifier(onKeyEvent = null, onPreviewKeyEvent = null, onInput = onInput)
+}
+
 /**
  * Adding this [modifier][Modifier] to the [modifier][Modifier] parameter of a component will
  * allow it to intercept hardware key events when it (or one of its children) is focused.
@@ -81,7 +90,8 @@ internal val ModifierLocalKeyInput = modifierLocalOf<KeyInputModifier?> { null }
 
 internal class KeyInputModifier(
     val onKeyEvent: ((KeyEvent) -> Boolean)?,
-    val onPreviewKeyEvent: ((KeyEvent) -> Boolean)?
+    val onPreviewKeyEvent: ((KeyEvent) -> Boolean)?,
+    val onInput: ((String) -> Boolean)? = null,
 ) : ModifierLocalConsumer, ModifierLocalProvider<KeyInputModifier?>, OnPlacedModifier {
     private var focusModifier: FocusModifier? = null
     var parent: KeyInputModifier? = null
@@ -93,6 +103,15 @@ internal class KeyInputModifier(
         get() = ModifierLocalKeyInput
     override val value: KeyInputModifier
         get() = this
+
+    fun processTextInput(input: String): Boolean {
+        val activeKeyInputModifier = focusModifier
+            ?.findActiveFocusNode()
+            ?.findLastKeyInputModifier()
+            ?: error("input can't be processed because this input node is not active.")
+        //todo val consumed = activeKeyInputModifier.propagatePreviewInput(input)
+        return /*if (consumed) true else */activeKeyInputModifier.propagateInput(input)
+    }
 
     fun processKeyInput(keyEvent: KeyEvent): Boolean {
         val activeKeyInputModifier = focusModifier
@@ -126,6 +145,15 @@ internal class KeyInputModifier(
 
         // If the event is not consumed, we propagate it to the parent.
         return parent?.propagateKeyEvent(keyEvent) ?: false
+    }
+
+    fun propagateInput(input: String): Boolean {
+        // We attempt to consume the key event first.
+        val consumed = onInput?.invoke(input)
+        if (consumed == true) return consumed
+
+        // If the event is not consumed, we propagate it to the parent.
+        return parent?.propagateInput(input) ?: false
     }
 
     override fun onPlaced(coordinates: LayoutCoordinates) {

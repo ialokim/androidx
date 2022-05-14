@@ -47,4 +47,6 @@ interface RootForTest {
      * @return true if the event was consumed. False otherwise.
      */
     fun sendKeyEvent(keyEvent: KeyEvent): Boolean
+
+    fun sendInputEvent(input: String): Boolean
 }

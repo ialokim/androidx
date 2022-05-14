@@ -36,3 +36,11 @@ internal actual fun sendKeyEvent(
 
     return keyInputModifier.processKeyInput(keyEvent)
 }
+
+internal actual fun sendInputEvent(
+    platformInputService: PlatformInput,
+    keyInputModifier: KeyInputModifier,
+    input: String
+): Boolean {
+    return keyInputModifier.processTextInput(input)
+}

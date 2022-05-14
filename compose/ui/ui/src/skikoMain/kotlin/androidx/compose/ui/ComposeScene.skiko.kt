@@ -65,6 +65,7 @@ import org.jetbrains.skia.Canvas
 import kotlin.coroutines.CoroutineContext
 import kotlin.jvm.Volatile
 import org.jetbrains.skiko.SkiaLayer
+import org.jetbrains.skiko.SkikoInputEvent
 
 internal val LocalComposeScene = staticCompositionLocalOf<ComposeScene> {
     error("CompositionLocal LocalComposeScene not provided")
@@ -529,6 +530,10 @@ class ComposeScene internal constructor(
      */
     fun sendKeyEvent(event: ComposeKeyEvent): Boolean = postponeInvalidation {
         return focusedOwner?.sendKeyEvent(event) == true
+    }
+
+    fun sendInputEvent(event: SkikoInputEvent): Boolean = postponeInvalidation {
+        return focusedOwner?.sendInputEvent(event.input) == true
     }
 
     internal fun onInputMethodEvent(event: Any) = this.onPlatformInputMethodEvent(event)

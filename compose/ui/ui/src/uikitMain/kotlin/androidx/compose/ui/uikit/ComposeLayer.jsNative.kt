@@ -69,10 +69,12 @@ internal class ComposeLayer {
         }
 
         override fun onInputEvent(event: SkikoInputEvent) {
-            TODO("need scene.sendInputEvent")
+            println("DIMA event.input: ${event.input}")
+            scene.sendInputEvent(event)
         }
 
         override fun onKeyboardEvent(event: SkikoKeyboardEvent) = catchExceptions {
+            println("DIMA onKeyboardEvent event: $event")
             if (isDisposed) return@catchExceptions
             if (scene.sendKeyEvent(ComposeKeyEvent(event))) {
 //                event.consume()

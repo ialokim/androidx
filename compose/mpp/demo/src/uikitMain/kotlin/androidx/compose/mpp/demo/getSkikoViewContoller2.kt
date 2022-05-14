@@ -64,7 +64,7 @@ class Clocks(private val layer: SkiaLayer) : SkikoView {
         canvas.scale(scale.toFloat(), scale.toFloat())
         val input = ParagraphBuilder(style, fontCollection)
             .pushStyle(TextStyle().setColor(0xFF000000.toInt()))
-            .addText("TextInput2: $inputText")
+            .addText("TextInput: $inputText")
             .popStyle()
             .build()
         input.layout(Float.POSITIVE_INFINITY)

@@ -17,8 +17,13 @@
 package androidx.compose.foundation.text
 
 import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEvent
 
-internal actual val platformDefaultKeyMapping: KeyMapping = defaultKeyMapping
+internal actual val platformDefaultKeyMapping: KeyMapping = object :KeyMapping {
+    override fun map(event: KeyEvent): KeyCommand? {
+        return KeyCommand.LEFT_WORD
+    }
+}
 
 internal actual object MappedKeys {
     actual val A: Key = TODO("Implement native  MappedKeys")

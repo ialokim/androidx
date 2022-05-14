@@ -223,6 +223,10 @@ internal class SkiaBasedOwner(
         return sendKeyEvent(platformInputService, keyInputModifier, keyEvent)
     }
 
+    override fun sendInputEvent(input: String): Boolean {
+        return sendInputEvent(platformInputService, keyInputModifier, input)
+    }
+
     override var showLayoutBounds = false
 
     override fun requestFocus() = true
@@ -408,6 +412,12 @@ internal expect fun sendKeyEvent(
     platformInputService: PlatformInput,
     keyInputModifier: KeyInputModifier,
     keyEvent: KeyEvent
+): Boolean
+
+internal expect fun sendInputEvent(
+    platformInputService: PlatformInput,
+    keyInputModifier: KeyInputModifier,
+    input: String
 ): Boolean
 
 internal expect fun commitPointerIcon(
