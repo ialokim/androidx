@@ -52,6 +52,7 @@ internal actual class ComposeWindow : UIViewController {
 
     override fun viewDidLoad() {
         super.viewDidLoad()
+        println("DIMA viewDidLoad")
         (this.view as? SkikoUIView)?.showScreenKeyboard()
     }
 
