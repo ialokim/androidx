@@ -47,7 +47,7 @@ internal actual class PlatformInput actual constructor(component: PlatformCompon
     }
 
     override fun updateState(oldValue: TextFieldValue?, newValue: TextFieldValue) {
-        println("DIMA updateState, oldValue: $oldValue, newValue:$newValue")
+
     }
 
     override fun notifyFocusedRect(rect: Rect) =

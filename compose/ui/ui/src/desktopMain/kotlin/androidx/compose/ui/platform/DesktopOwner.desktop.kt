@@ -48,6 +48,14 @@ internal actual fun commitPointerIcon(
     containerCursor?.commitCursor()
 }
 
+internal actual fun sendInputEvent(
+    platformInputService: PlatformInput,
+    keyInputModifier: KeyInputModifier,
+    input: String
+): Boolean {
+    return keyInputModifier.processTextInput(input)
+}
+
 @OptIn(ExperimentalComposeUiApi::class)
 internal actual fun getPointerIcon(
     containerCursor: PlatformComponentWithCursor?

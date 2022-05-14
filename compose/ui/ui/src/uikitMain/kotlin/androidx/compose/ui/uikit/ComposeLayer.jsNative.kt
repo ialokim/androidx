@@ -44,6 +44,8 @@ import androidx.compose.ui.createSkiaLayer
 import androidx.compose.ui.input.key.NativeKeyEvent
 import androidx.compose.ui.window.WindowExceptionHandler
 
+private const val USE_KEYBOARD_EVENT = false
+
 internal class ComposeLayer {
     private var isDisposed = false
 
@@ -69,15 +71,16 @@ internal class ComposeLayer {
         }
 
         override fun onInputEvent(event: SkikoInputEvent) {
-            println("DIMA event.input: ${event.input}")
             scene.sendInputEvent(event)
         }
 
         override fun onKeyboardEvent(event: SkikoKeyboardEvent) = catchExceptions {
-            println("DIMA onKeyboardEvent event: $event")
-            if (isDisposed) return@catchExceptions
-            if (scene.sendKeyEvent(ComposeKeyEvent(event))) {
-//                event.consume()
+            if (USE_KEYBOARD_EVENT) {
+                println("DIMA onKeyboardEvent event: $event")
+                if (isDisposed) return@catchExceptions
+                if (scene.sendKeyEvent(ComposeKeyEvent(event))) {
+//                    event.consume()
+                }
             }
         }
 

@@ -17,7 +17,7 @@
 package androidx.compose.ui.text.input
 
 internal actual fun StringBuilder.appendPartOfCharArray(charArray: CharArray, offset: Int, len: Int) {
-    for (i in 0 until (offset + len)) {
+    for (i in offset until (offset + len)) {
         append(charArray[i])
     }
 }
