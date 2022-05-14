@@ -30,17 +30,6 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Application
 
-//fun makeApp(skiaLayer: SkiaLayer) = Clocks(skiaLayer)
-
-//fun getSkikoViewContoller(): UIViewController = SkikoViewController(
-//    SkikoUIView(
-//        SkiaLayer().apply {
-//            gesturesToListen = SkikoGestureEventKind.values()
-//            skikoView = GenericSkikoView(this, makeApp(this))
-//        }
-//    )
-//)
-
 fun getSkikoViewContoller() = Application("Compose/Native sample") {
     var textState by remember { mutableStateOf("text field") }
     var tick by remember { mutableStateOf(false) }
