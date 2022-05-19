@@ -46,7 +46,7 @@ data class CombinedClickableLabels(
 
 // TODO add a separation function with required interactionSource: MutableInteractionSource
 @ExperimentalFoundationApi
-fun Modifier.combinedClickable(
+fun Modifier.combinedClickable( // onCombinedCLick: no indication, no semantics, with filter (combinedClickable should be implemented using it)
     indication: Indication? = null,
     enabled: Boolean = true,
     role: Role? = null,

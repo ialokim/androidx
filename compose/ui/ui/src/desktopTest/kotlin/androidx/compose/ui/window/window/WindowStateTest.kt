@@ -27,11 +27,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.awt.ComposeWindow
+import androidx.compose.ui.input.pointer.PointerKeyboardModifiers
+import androidx.compose.ui.input.pointer.isAltPressed
+import androidx.compose.ui.input.pointer.isShiftPressed
 import androidx.compose.ui.isLinux
 import androidx.compose.ui.isMacOs
 import androidx.compose.ui.isWindows
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.platform.WindowInfo
+import androidx.compose.ui.sendKeyEvent
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
@@ -47,6 +51,10 @@ import java.awt.Dimension
 import java.awt.Point
 import java.awt.Rectangle
 import java.awt.Window
+import java.awt.event.InputEvent.ALT_DOWN_MASK
+import java.awt.event.InputEvent.SHIFT_DOWN_MASK
+import java.awt.event.KeyEvent.VK_ALT
+import java.awt.event.KeyEvent.VK_SHIFT
 import java.awt.event.WindowEvent
 import javax.swing.JFrame
 import kotlin.math.abs
@@ -772,6 +780,29 @@ class WindowStateTest {
         assertThat(receivedNumbers).isEqualTo(listOf(1, 2))
 
         exitApplication()
+    }
+
+    @Test
+    fun `WindowInfo keyModifiers get updated`() = runApplicationTest {
+        lateinit var window1: ComposeWindow
+        var modifiers: PointerKeyboardModifiers? = null
+
+        launchApplication {
+            Window(onCloseRequest = ::exitApplication) {
+                window1 = window
+                modifiers = LocalWindowInfo.current.keyboardModifiers
+            }
+        }
+        awaitIdle()
+
+        window1.sendKeyEvent(VK_ALT, ALT_DOWN_MASK)
+        awaitIdle()
+        assertThat(modifiers?.isAltPressed).isEqualTo(true)
+
+        window1.sendKeyEvent(VK_SHIFT, SHIFT_DOWN_MASK)
+        awaitIdle()
+        assertThat(modifiers?.isAltPressed).isEqualTo(false)
+        assertThat(modifiers?.isShiftPressed).isEqualTo(true)
     }
 
     @Test

@@ -31,7 +31,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.draggable
+import androidx.compose.foundation.drag
 import androidx.compose.material.Checkbox
 import androidx.compose.material.Text
 import androidx.compose.runtime.getValue
@@ -112,7 +112,7 @@ fun main() {
                     var offset1 by remember { mutableStateOf(Offset.Zero) }
                     Box(modifier = Modifier.offset { IntOffset(offset1.x.toInt(), offset1.y.toInt()) }
                         .size(100.dp).background(Color.Blue)
-                        .draggable(
+                        .drag(
                             enabled = enabled,
                             filter = { button?.isSecondary == true },
                             onDragStart = { o, km -> println("Blue: Start, offset=$o, km=$km") },
@@ -127,7 +127,7 @@ fun main() {
                     Box(
                         modifier = Modifier.offset { IntOffset(offset2.x.toInt(), offset2.y.toInt()) }
                             .size(100.dp).background(Color.Gray)
-                            .draggable(
+                            .drag(
                                 enabled = enabled,
                                 onDragStart = { o, km -> println("Gray: Start, offset=$o, km=$km") },
                                 onDragEnd = { println("Gray: End") }

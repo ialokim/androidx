@@ -133,9 +133,6 @@ internal interface Owner {
 
     val layoutDirection: LayoutDirection
 
-    @ExperimentalComposeUiApi
-    val keyboardModifiers: Flow<PointerKeyboardModifiers>
-
     /**
      * `true` when layout should draw debug bounds.
      */

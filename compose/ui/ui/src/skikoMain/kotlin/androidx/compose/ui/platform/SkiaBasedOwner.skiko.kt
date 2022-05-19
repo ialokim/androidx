@@ -178,11 +178,6 @@ internal class SkiaBasedOwner(
         dispatchSnapshotChanges?.invoke(command)
     }
 
-    private val _keyboardModifiers = MutableStateFlow(PointerKeyboardModifiers())
-
-    override val keyboardModifiers: Flow<PointerKeyboardModifiers>
-        get() = _keyboardModifiers
-
     private val pointerInputEventProcessor = PointerInputEventProcessor(root)
     private val measureAndLayoutDelegate = MeasureAndLayoutDelegate(root)
 
@@ -226,7 +221,6 @@ internal class SkiaBasedOwner(
     override val viewConfiguration: ViewConfiguration = DefaultViewConfiguration(density)
 
     override fun sendKeyEvent(keyEvent: KeyEvent): Boolean {
-        _keyboardModifiers.tryEmit(PointerKeyboardModifiers(keyEvent))
         return sendKeyEvent(platformInputService, keyInputModifier, keyEvent)
     }
 

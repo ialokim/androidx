@@ -22,7 +22,7 @@ import androidx.compose.runtime.Stable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.snapshotFlow
-import kotlinx.coroutines.flow.collect
+import androidx.compose.ui.input.pointer.PointerKeyboardModifiers
 
 /**
  * Provides information about the Window that is hosting this compose hierarchy.
@@ -37,6 +37,8 @@ interface WindowInfo {
      * is in focus.
      */
     val isWindowFocused: Boolean
+
+    val keyboardModifiers: PointerKeyboardModifiers?
 }
 
 @Composable
@@ -50,7 +52,13 @@ internal fun WindowFocusObserver(onWindowFocusChanged: (isWindowFocused: Boolean
 
 internal class WindowInfoImpl : WindowInfo {
     private val _isWindowFocused = mutableStateOf(false)
+    private val _keyboardModifiers = mutableStateOf<PointerKeyboardModifiers?>(null)
+
     override var isWindowFocused: Boolean
         set(value) { _isWindowFocused.value = value }
         get() = _isWindowFocused.value
+
+    override var keyboardModifiers: PointerKeyboardModifiers?
+        get() = _keyboardModifiers.value
+        set(value) { _keyboardModifiers.value = value }
 }

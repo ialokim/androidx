@@ -291,7 +291,9 @@ internal class ComposeLayer {
 
     private fun onKeyEvent(event: KeyEvent) = catchExceptions {
         if (isDisposed) return@catchExceptions
-        if (scene.sendKeyEvent(ComposeKeyEvent(event))) {
+        val composeKeyEvent = ComposeKeyEvent(event)
+        _component.windowInfo.keyboardModifiers = PointerKeyboardModifiers(composeKeyEvent)
+        if (scene.sendKeyEvent(composeKeyEvent)) {
             event.consume()
         }
     }

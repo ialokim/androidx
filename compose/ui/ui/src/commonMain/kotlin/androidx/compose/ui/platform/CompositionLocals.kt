@@ -91,14 +91,6 @@ val LocalFocusManager = staticCompositionLocalOf<FocusManager> {
 }
 
 /**
- * The CompositionLocal that can be used to observe [PointerKeyboardModifiers] changes
- */
-@ExperimentalComposeUiApi
-val LocalKeyboardModifiers = staticCompositionLocalOf<Flow<PointerKeyboardModifiers>> {
-    noLocalProvidedFor("LocalKeyboardModifiers")
-}
-
-/**
  * The CompositionLocal to provide platform font loading methods.
  *
  * @suppress
@@ -203,7 +195,6 @@ internal fun ProvideCommonCompositionLocals(
         LocalViewConfiguration provides owner.viewConfiguration,
         LocalWindowInfo provides owner.windowInfo,
         LocalPointerIconService provides owner.pointerIconService,
-        LocalKeyboardModifiers provides owner.keyboardModifiers,
         content = content
     )
 }

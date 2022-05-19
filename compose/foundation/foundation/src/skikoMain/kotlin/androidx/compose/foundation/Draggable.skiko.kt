@@ -18,11 +18,16 @@ package androidx.compose.foundation
 
 import androidx.compose.foundation.gestures.awaitPointerSlopOrCancellation
 import androidx.compose.foundation.gestures.drag
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
@@ -37,12 +42,10 @@ import androidx.compose.ui.input.pointer.PointerType
 import androidx.compose.ui.input.pointer.changedToUpIgnoreConsumed
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.positionChange
-import androidx.compose.ui.platform.LocalKeyboardModifiers
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.util.fastAll
 import kotlin.jvm.JvmInline
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.currentCoroutineContext
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.isActive
 
 @ExperimentalFoundationApi
@@ -69,7 +72,7 @@ object AwaitDragStart {
         { initialDown, filter ->
             val awaitVariant = when (initialDown.changes[0].type) {
                 PointerType.Mouse -> OnSlop
-                else -> OnLongPress
+                else -> OnSlop
             }
             awaitVariant(initialDown, filter)
         }
@@ -97,6 +100,7 @@ object AwaitDragStart {
 
     @OptIn(ExperimentalComposeUiApi::class, ExperimentalFoundationApi::class)
     val OnLongPress: suspend AwaitPointerEventScope.(PointerEvent, PointerFilter) -> DragStartResult? =
+        // need to cancel if slop exceeds
         { initialDown, filter ->
             var offset = Offset.Zero
             val cancelled = withTimeoutOrNull(viewConfiguration.longPressTimeoutMillis) {
@@ -119,32 +123,48 @@ object AwaitDragStart {
         }
 }
 
+@Composable
+private fun KeyboardModifiersObserver(onKeyboardModifiersChanged: (PointerKeyboardModifiers) -> Unit) {
+    val windowInfo = LocalWindowInfo.current
+    val callback = rememberUpdatedState(onKeyboardModifiersChanged)
+
+    LaunchedEffect(windowInfo) {
+        snapshotFlow { windowInfo.keyboardModifiers }.collect {
+            if (it != null) callback.value(it)
+        }
+    }
+}
+
 @OptIn(ExperimentalComposeUiApi::class)
 @ExperimentalFoundationApi
 /**
  * @param onDrag - receives an instance of [DragChange]  for every pointer position change when dragging or
  * when [PointerKeyboardModifiers] state changes after drag started and before it ends.
  */
-fun Modifier.draggable(
+fun Modifier.drag( // drag
     enabled: Boolean = true,
     filter: PointerFilterScope.() -> Boolean = { isMouse && isButtonPressed(PointerButton.Primary) || !isMouse },
-    awaitForDragStart: suspend AwaitPointerEventScope.(PointerEvent, PointerFilter) -> DragStartResult? = AwaitDragStart.Default,
+    awaitForDragStart: suspend AwaitPointerEventScope.(PointerEvent, PointerFilter) -> DragStartResult? = AwaitDragStart.Default, // maybe add later, use slop
     onDragStart: (Offset, PointerKeyboardModifiers) -> Unit = { _, _ -> },
     onDragCancel: () -> Unit = {},
     onDragEnd: () -> Unit = {},
     onDrag: (DragChange) -> Unit
 ): Modifier = composed {
-    val keyModifiers = LocalKeyboardModifiers.current
     var dragInProgress by remember { mutableStateOf(false) }
     var previousKeyboardModifiers by remember { mutableStateOf(PointerKeyboardModifiers()) }
 
+    val onDragState = rememberUpdatedState(onDrag)
+    val onDragStartState = rememberUpdatedState(onDragStart)
+    val onDragEndState = rememberUpdatedState(onDragEnd)
+    val onDragCancelState = rememberUpdatedState(onDragCancel)
+
     if (enabled) {
-        LaunchedEffect(keyModifiers) {
-            keyModifiers.filter {
-                dragInProgress && previousKeyboardModifiers != it
-            }.collect {
-                onDrag(DragChange(Offset.Zero, previousKeyboardModifiers, it))
-                previousKeyboardModifiers = it
+        if (dragInProgress) {
+            KeyboardModifiersObserver {
+                if (previousKeyboardModifiers != it) {
+                    onDragState.value(DragChange(Offset.Zero, previousKeyboardModifiers, it))
+                    previousKeyboardModifiers = it
+                }
             }
         }
 
@@ -162,14 +182,14 @@ fun Modifier.draggable(
 
                     if (startResult != null) {
                         dragInProgress = true
-                        onDragStart(
+                        onDragStartState.value(
                             press.changes[0].position,
                             currentEvent.keyboardModifiers
                         )
                         if (startResult.dragAmount != Offset.Zero ||
                             currentEvent.keyboardModifiers != previousKeyboardModifiers
                         ) {
-                            onDrag(
+                            onDragState.value(
                                 DragChange(
                                     startResult.dragAmount,
                                     previousKeyboardModifiers,
@@ -186,14 +206,14 @@ fun Modifier.draggable(
                                 currentEvent.keyboardModifiers
                             )
                             previousKeyboardModifiers = currentEvent.keyboardModifiers
-                            onDrag(change)
+                            onDragState.value(change)
                             it.consume()
                         }
 
                         if (!dragCompleted) {
-                            onDragCancel()
+                            onDragCancelState.value()
                         } else {
-                            onDragEnd()
+                            onDragEndState.value()
                         }
                         dragInProgress = false
                     }

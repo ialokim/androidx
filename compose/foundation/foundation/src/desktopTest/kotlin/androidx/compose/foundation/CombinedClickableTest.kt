@@ -483,7 +483,7 @@ class CombinedClickableTest {
                 Box(
                     modifier = Modifier
                         .size(40.dp, 40.dp)
-                        .draggable(
+                        .drag(
                             enabled = true,
                             onDragStart = { offset, keyModifiers ->
                                 dragStartResult = { offset to keyModifiers }
@@ -557,7 +557,7 @@ class CombinedClickableTest {
                 Box(
                     modifier = Modifier
                         .size(40.dp, 40.dp)
-                        .draggable(
+                        .drag(
                             enabled = true,
                             awaitForDragStart = AwaitDragStart.OnLongPress,
                             onDragStart = { offset, keyModifiers ->
