@@ -45,6 +45,7 @@ import kotlin.test.assertTrue
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
+import org.junit.Ignore
 import org.junit.Test
 
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalFoundationApi::class, ExperimentalCoroutinesApi::class)
@@ -536,7 +537,7 @@ class CombinedClickableTest {
         }
     }
 
-    @Test
+    @Test @Ignore // remove Ignore if needed later when startDragOnLongPress mode supported
     fun `draggable by mouse OnLongPress primary button`() = runBlocking {
         val density = Density(1f)
         val viewConfiguration = DefaultViewConfiguration(density)
@@ -559,7 +560,6 @@ class CombinedClickableTest {
                         .size(40.dp, 40.dp)
                         .drag(
                             enabled = true,
-                            awaitForDragStart = AwaitDragStart.OnLongPress,
                             onDragStart = { offset, keyModifiers ->
                                 dragStartResult = { offset to keyModifiers }
                             },
