@@ -23,15 +23,11 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.ImageComposeScene
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.input.pointer.PointerButton
 import androidx.compose.ui.input.pointer.PointerButtons
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.PointerKeyboardModifiers
 import androidx.compose.ui.input.pointer.isAltPressed
-import androidx.compose.ui.input.pointer.isBack
-import androidx.compose.ui.input.pointer.isForward
-import androidx.compose.ui.input.pointer.isPrimary
-import androidx.compose.ui.input.pointer.isSecondary
-import androidx.compose.ui.input.pointer.isTertiary
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.DefaultViewConfiguration
 import androidx.compose.ui.unit.Density
@@ -52,7 +48,7 @@ import org.junit.Test
 class CombinedClickableTest {
 
     private fun testClick(
-        filter: PointerFilterScope.() -> Boolean,
+        filter: PointerFilterBuilder.() -> Unit,
         pressButtons: PointerButtons,
     ) = ImageComposeScene(
         width = 100,
@@ -64,7 +60,7 @@ class CombinedClickableTest {
         scene.setContent {
             Box(
                 modifier = Modifier
-                    .combinedClickable(filter = filter) {
+                    .onCombinedClick(filter = filter) {
                         clicksCount++
                     }.size(10.dp, 20.dp)
             )
@@ -84,36 +80,46 @@ class CombinedClickableTest {
 
     @Test
     fun primaryClicks() = testClick(
-        filter = { button.isPrimary },
+        filter = {
+            mouse { button = PointerButton.Primary }
+        },
         pressButtons = PointerButtons(isPrimaryPressed = true)
     )
 
     @Test
     fun secondaryClicks() = testClick(
-        filter = { button.isSecondary },
+        filter = {
+            mouse { button = PointerButton.Secondary }
+        },
         pressButtons = PointerButtons(isSecondaryPressed = true)
     )
 
     @Test
     fun tertiaryClicks() = testClick(
-        filter = { button.isTertiary },
+        filter = {
+            mouse { button = PointerButton.Tertiary }
+        },
         pressButtons = PointerButtons(isTertiaryPressed = true)
     )
 
     @Test
     fun backClicks() = testClick(
-        filter = { button.isBack },
+        filter = {
+            mouse { button = PointerButton.Back }
+        },
         pressButtons = PointerButtons(isBackPressed = true)
     )
 
     @Test
     fun forwardClicks() = testClick(
-        filter = { button.isForward },
+        filter = {
+            mouse { button = PointerButton.Forward }
+        },
         pressButtons = PointerButtons(isForwardPressed = true)
     )
 
     private fun testDoubleClick(
-        filter: PointerFilterScope.() -> Boolean,
+        filter: PointerFilterBuilder.() -> Unit,
         pressButtons: PointerButtons,
     ) = runBlocking {
         val density = Density(1f)
@@ -129,7 +135,7 @@ class CombinedClickableTest {
             scene.setContent {
                 Box(
                     modifier = Modifier
-                        .combinedClickable(filter = filter, onDoubleClick = {
+                        .onCombinedClick(filter = filter, onDoubleClick = {
                             doubleClickCount++
                         }) {
                             clicksCount++
@@ -158,24 +164,30 @@ class CombinedClickableTest {
 
     @Test
     fun primaryDoubleClick() = testDoubleClick(
-        filter = { button.isPrimary },
+        filter = {
+            mouse { button = PointerButton.Primary }
+        },
         pressButtons = PointerButtons(isPrimaryPressed = true)
     )
 
     @Test
     fun secondaryDoubleClick() = testDoubleClick(
-        filter = { button.isSecondary },
+        filter = {
+            mouse { button = PointerButton.Secondary }
+        },
         pressButtons = PointerButtons(isSecondaryPressed = true)
     )
 
     @Test
     fun tertiaryDoubleClick() = testDoubleClick(
-        filter = { button.isTertiary },
+        filter = {
+            mouse { button = PointerButton.Tertiary }
+        },
         pressButtons = PointerButtons(isTertiaryPressed = true)
     )
 
     private fun testLongClick(
-        filter: PointerFilterScope.() -> Boolean,
+        filter: PointerFilterBuilder.() -> Unit,
         pressButtons: PointerButtons,
     ) = runBlocking {
         val density = Density(1f)
@@ -191,7 +203,7 @@ class CombinedClickableTest {
             scene.setContent {
                 Box(
                     modifier = Modifier
-                        .combinedClickable(filter = filter, onLongClick = {
+                        .onCombinedClick(filter = filter, onLongClick = {
                             longClickCount++
                         }) {
                             clicksCount++
@@ -216,19 +228,25 @@ class CombinedClickableTest {
 
     @Test
     fun primaryLongClick() = testLongClick(
-        filter = { button.isPrimary },
+        filter = {
+            mouse { button = PointerButton.Primary }
+        },
         pressButtons = PointerButtons(isPrimaryPressed = true)
     )
 
     @Test
     fun secondaryLongClick() = testLongClick(
-        filter = { button.isSecondary },
+        filter = {
+            mouse { button = PointerButton.Secondary }
+        },
         pressButtons = PointerButtons(isSecondaryPressed = true)
     )
 
     @Test
     fun tertiaryLongClick() = testLongClick(
-        filter = { button.isTertiary },
+        filter = {
+            mouse { button = PointerButton.Tertiary }
+        },
         pressButtons = PointerButtons(isTertiaryPressed = true)
     )
 
@@ -244,10 +262,10 @@ class CombinedClickableTest {
         scene.setContent {
             Box(
                 modifier = Modifier
-                    .combinedClickable(filter = { button.isPrimary }) {
+                    .onCombinedClick(filter = { mouse { button = PointerButton.Primary } }) {
                         primaryClicks++
                     }
-                    .combinedClickable(filter = { button.isSecondary }) {
+                    .onCombinedClick(filter = { mouse { button = PointerButton.Secondary } }) {
                         secondaryClicks++
                     }
                     .size(40.dp, 40.dp)
@@ -295,8 +313,13 @@ class CombinedClickableTest {
                     .combinedClickable {
                         genericClicks++
                     }
-                    .combinedClickable(
-                        filter = { isMouse && button.isPrimary && keyboardModifiers.isAltPressed }
+                    .onCombinedClick(
+                        filter = {
+                            mouse {
+                                button = PointerButton.Primary
+                                keyboardModifiers = { isAltPressed }
+                            }
+                        }
                     ) {
                         withAltClicks++
                     }
@@ -484,7 +507,7 @@ class CombinedClickableTest {
                 Box(
                     modifier = Modifier
                         .size(40.dp, 40.dp)
-                        .drag(
+                        .onDrag(
                             enabled = true,
                             onDragStart = { offset, keyModifiers ->
                                 dragStartResult = { offset to keyModifiers }
@@ -558,7 +581,7 @@ class CombinedClickableTest {
                 Box(
                     modifier = Modifier
                         .size(40.dp, 40.dp)
-                        .drag(
+                        .onDrag(
                             enabled = true,
                             onDragStart = { offset, keyModifiers ->
                                 dragStartResult = { offset to keyModifiers }

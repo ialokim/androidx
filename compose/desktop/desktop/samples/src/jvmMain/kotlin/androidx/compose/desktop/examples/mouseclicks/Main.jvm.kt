@@ -22,7 +22,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.combinedClickable
-import androidx.compose.ui.input.pointer.isPrimary
+import androidx.compose.foundation.onCombinedClick
 import androidx.compose.ui.input.pointer.isSecondary
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -31,7 +31,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.drag
+import androidx.compose.foundation.onDrag
 import androidx.compose.material.Checkbox
 import androidx.compose.material.Text
 import androidx.compose.runtime.getValue
@@ -43,6 +43,7 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.PointerButton
 import androidx.compose.ui.input.pointer.isAltPressed
 import androidx.compose.ui.input.pointer.isCtrlPressed
 import androidx.compose.ui.input.pointer.isShiftPressed
@@ -86,18 +87,24 @@ fun main() {
                         {
                             println("Simple LClick click")
                         }
-                        .combinedClickable(
+                        .onCombinedClick(
                             enabled = enabled,
                             filter = {
-                                button.isPrimary && keyboardModifiers.isShiftPressed
+                                mouse {
+                                    button = PointerButton.Primary
+                                    keyboardModifiers = { isShiftPressed }
+                                }
                             },
                         ) {
                             println("LClick + Shit")
                         }
-                        .combinedClickable(
+                        .onCombinedClick(
                             enabled = enabled,
                             filter = {
-                                button.isSecondary && keyboardModifiers.isAltPressed
+                                mouse {
+                                    button = PointerButton.Secondary
+                                    keyboardModifiers = { isAltPressed }
+                                }
                             },
                         ) {
                             println("RClick + Alt")
@@ -112,7 +119,7 @@ fun main() {
                     var offset1 by remember { mutableStateOf(Offset.Zero) }
                     Box(modifier = Modifier.offset { IntOffset(offset1.x.toInt(), offset1.y.toInt()) }
                         .size(100.dp).background(Color.Blue)
-                        .drag(
+                        .onDrag(
                             enabled = enabled,
                             filter = { button?.isSecondary == true },
                             onDragStart = { o, km -> println("Blue: Start, offset=$o, km=$km") },
@@ -127,7 +134,7 @@ fun main() {
                     Box(
                         modifier = Modifier.offset { IntOffset(offset2.x.toInt(), offset2.y.toInt()) }
                             .size(100.dp).background(Color.Gray)
-                            .drag(
+                            .onDrag(
                                 enabled = enabled,
                                 onDragStart = { o, km -> println("Gray: Start, offset=$o, km=$km") },
                                 onDragEnd = { println("Gray: End") }

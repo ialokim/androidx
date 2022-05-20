@@ -26,56 +26,59 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
-import androidx.compose.ui.input.pointer.isPrimary
+import androidx.compose.ui.input.pointer.PointerEvent
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.semantics.disabled
-import androidx.compose.ui.semantics.onClick
-import androidx.compose.ui.semantics.onLongClick
-import androidx.compose.ui.semantics.role
-import androidx.compose.ui.semantics.semantics
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.isActive
 
 @ExperimentalFoundationApi
-data class CombinedClickableLabels(
-    val onDoubleClickLabel: String? = null,
-    val onLongPressLabel: String? = null,
-    val onClickLabel: String? = null
-)
-
-// TODO add a separation function with required interactionSource: MutableInteractionSource
-@ExperimentalFoundationApi
-fun Modifier.combinedClickable( // onCombinedCLick: no indication, no semantics, with filter (combinedClickable should be implemented using it)
-    indication: Indication? = null,
+fun Modifier.onCombinedClick(
     enabled: Boolean = true,
-    role: Role? = null,
-    labels: CombinedClickableLabels? = null,
-    filter: PointerFilterScope.() -> Boolean = { isMouse && button.isPrimary || !isMouse },
+    filter: PointerFilterBuilder.() -> Unit = PointerFilterBuilder.Default,
+    onDoubleClick: (() -> Unit)? = null,
+    onLongClick: (() -> Unit)? = null,
+    onClick: () -> Unit
+) = composed {
+    Modifier.onCombinedClick(
+        enabled = enabled,
+        filter = filter,
+        interactionSource = remember { MutableInteractionSource() },
+        onDoubleClick = onDoubleClick,
+        onLongClick = onLongClick,
+        onClick = onClick
+    )
+}
+
+@ExperimentalFoundationApi
+fun Modifier.onCombinedClick(
+    enabled: Boolean = true,
+    interactionSource: MutableInteractionSource,
+    filter: PointerFilterBuilder.() -> Unit,
     onDoubleClick: (() -> Unit)? = null,
     onLongClick: (() -> Unit)? = null,
     onClick: () -> Unit
 ) = composed(
     inspectorInfo = {
-        name = "combinedClickable"
+        name = "onCombinedClick"
         properties["enabled"] = enabled
         properties["filter"] = filter
-        properties["role"] = role
-        properties["labels"] = labels
         properties["onDoubleClick"] = onDoubleClick
         properties["onLongClick"] = onLongClick
         properties["onClick"] = onClick
-        properties["indication"] = indication
+        properties["interactionSource"] = interactionSource
     },
     factory = {
-        val interactionSource = remember { MutableInteractionSource() }
-        val pressedInteraction = remember { mutableStateOf<PressInteraction.Press?>(null) }
-        val onClickState = rememberUpdatedState(onClick)
-        val on2xClickState = rememberUpdatedState(onDoubleClick)
-        val onLongClickState = rememberUpdatedState(onLongClick)
-        val filterState = rememberUpdatedState(filter)
-
         val gestureModifier = if (enabled) {
+            val pressedInteraction = remember { mutableStateOf<PressInteraction.Press?>(null) }
+            val onClickState = rememberUpdatedState(onClick)
+            val on2xClickState = rememberUpdatedState(onDoubleClick)
+            val onLongClickState = rememberUpdatedState(onLongClick)
+            val filterState = remember {
+                mutableStateOf<(PointerEvent) -> Boolean>({ false })
+            }.apply {
+                value = remember(filter) { PointerFilterBuilder().also(filter).build() }
+            }
+
             Modifier.pointerInput(Unit) {
                 val clicksHandlerScope = ClicksHandlerScope(
                     pointerInputScope = this@pointerInput,
@@ -96,16 +99,5 @@ fun Modifier.combinedClickable( // onCombinedCLick: no indication, no semantics,
         }
 
         gestureModifier
-            .indication(interactionSource, indication)
-            .semantics(mergeDescendants = true) {
-                if (role != null) this.role = role
-                this.onClick(labels?.onClickLabel) { onClick(); true }
-
-                if (onLongClick != null) {
-                    this.onLongClick(labels?.onLongPressLabel) { onLongClick(); true }
-                }
-
-                if (!enabled) disabled()
-            }
     }
 )

@@ -54,7 +54,7 @@ internal class ClicksHandlerScope(
     pointerInputScope: PointerInputScope,
     val interactionSource: MutableInteractionSource,
     val pressedInteraction: MutableState<PressInteraction.Press?>,
-    val filterState: State<PointerFilterScope.() -> Boolean>,
+    val filterState: State<(PointerEvent) -> Boolean>,
     val onDoubleClick: State<(() -> Unit)?>,
     val onLongClick: State<(() -> Unit)?>,
     val onClick: State<() -> Unit>
@@ -200,7 +200,7 @@ internal class ClicksHandlerScope(
 
             event = event.takeIf {
                 it.isAllPressedUp(requireUnconsumed = true) &&
-                    filterState.value(PointerFilterScope(it))
+                    filterState.value(it)
             }
 
             // Check for cancel by position consumption. We can look on the Final pass of the
@@ -263,7 +263,7 @@ internal class ClicksHandlerScope(
 
 @OptIn(ExperimentalFoundationApi::class)
 internal suspend fun AwaitPointerEventScope.awaitPress(
-    filterPressEvent: PointerFilterScope.() -> Boolean,
+    filterPressEvent: (PointerEvent) -> Boolean,
     requireUnconsumed: Boolean = true
 ): PointerEvent {
     var event: PointerEvent? = null
@@ -271,7 +271,7 @@ internal suspend fun AwaitPointerEventScope.awaitPress(
     while (event == null) {
         event = awaitPointerEvent().takeIf {
             it.isAllPressedDown(requireUnconsumed = requireUnconsumed) &&
-            filterPressEvent(PointerFilterScope(it))
+            filterPressEvent(it)
         }
     }
 
