@@ -121,7 +121,9 @@ fun main() {
                         .size(100.dp).background(Color.Blue)
                         .onDrag(
                             enabled = enabled,
-                            filter = { button?.isSecondary == true },
+                            filter = {
+                                mouse { button = PointerButton.Secondary }
+                            },
                             onDragStart = { o, km -> println("Blue: Start, offset=$o, km=$km") },
                             onDragEnd = { println("Blue: End") }
                         ) {

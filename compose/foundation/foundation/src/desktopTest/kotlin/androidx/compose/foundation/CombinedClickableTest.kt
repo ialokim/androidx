@@ -48,7 +48,7 @@ import org.junit.Test
 class CombinedClickableTest {
 
     private fun testClick(
-        filter: PointerFilterBuilder.() -> Unit,
+        filter: PointerFilter.() -> Unit,
         pressButtons: PointerButtons,
     ) = ImageComposeScene(
         width = 100,
@@ -119,7 +119,7 @@ class CombinedClickableTest {
     )
 
     private fun testDoubleClick(
-        filter: PointerFilterBuilder.() -> Unit,
+        filter: PointerFilter.() -> Unit,
         pressButtons: PointerButtons,
     ) = runBlocking {
         val density = Density(1f)
@@ -187,7 +187,7 @@ class CombinedClickableTest {
     )
 
     private fun testLongClick(
-        filter: PointerFilterBuilder.() -> Unit,
+        filter: PointerFilter.() -> Unit,
         pressButtons: PointerButtons,
     ) = runBlocking {
         val density = Density(1f)

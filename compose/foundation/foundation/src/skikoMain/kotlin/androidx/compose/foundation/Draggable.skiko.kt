@@ -26,19 +26,25 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.AwaitPointerEventScope
 import androidx.compose.ui.input.pointer.PointerEvent
+import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.PointerInputChange
 import androidx.compose.ui.input.pointer.PointerKeyboardModifiers
+import androidx.compose.ui.input.pointer.PointerType
+import androidx.compose.ui.input.pointer.changedToUpIgnoreConsumed
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.positionChange
 import androidx.compose.ui.platform.LocalWindowInfo
+import androidx.compose.ui.util.fastAll
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 
 @ExperimentalFoundationApi
 data class DragChange(
@@ -51,94 +57,132 @@ data class DragChange(
 }
 
 @ExperimentalFoundationApi
-/**
- * @param onDrag - receives an instance of [DragChange]  for every pointer position change when dragging or
- * when [PointerKeyboardModifiers] state changes after drag started and before it ends.
- */
+    /**
+     * @param onDrag - receives an instance of [DragChange]  for every pointer position change when dragging or
+     * when [PointerKeyboardModifiers] state changes after drag started and before it ends.
+     */
 fun Modifier.onDrag(
     enabled: Boolean = true,
-    filter: PointerFilterBuilder.() -> Unit = PointerFilterBuilder.Default,
+    filter: PointerFilter.() -> Unit = PointerFilter.Default,
     onDragStart: (Offset, PointerKeyboardModifiers) -> Unit = { _, _ -> },
     onDragCancel: () -> Unit = {},
     onDragEnd: () -> Unit = {},
     onDrag: (DragChange) -> Unit
 ): Modifier = composed {
-    if (enabled) {
-        var dragInProgress by remember { mutableStateOf(false) }
-        var previousKeyboardModifiers by remember { mutableStateOf(PointerKeyboardModifiers()) }
+    if (!enabled) return@composed Modifier
 
-        val onDragState = rememberUpdatedState(onDrag)
-        val onDragStartState = rememberUpdatedState(onDragStart)
-        val onDragEndState = rememberUpdatedState(onDragEnd)
-        val onDragCancelState = rememberUpdatedState(onDragCancel)
+    var dragInProgress by remember { mutableStateOf(false) }
+    var dragPointer by remember { mutableStateOf<PointerType?>(null) }
+    var previousKeyboardModifiers by remember { mutableStateOf(PointerKeyboardModifiers()) }
 
-        val filterState = remember {
-            mutableStateOf<(PointerEvent) -> Boolean>({ false })
-        }.apply {
-            value = remember(filter) { PointerFilterBuilder().also(filter).build() }
-        }
+    val onDragState = rememberUpdatedState(onDrag)
+    val onDragStartState = rememberUpdatedState(onDragStart)
+    val onDragEndState = rememberUpdatedState(onDragEnd)
+    val onDragCancelState = rememberUpdatedState(onDragCancel)
 
-        if (dragInProgress) {
-            KeyboardModifiersObserver {
-                if (previousKeyboardModifiers != it) {
+    val pointerFilterState = remember {
+        mutableStateOf(PointerFilter())
+    }.apply {
+        value = remember(filter) { PointerFilter().also(filter) }
+    }
+
+    val combinedFilterState = remember {
+        mutableStateOf<(PointerEvent) -> Boolean>({ false })
+    }.apply {
+        value = remember(filter) { pointerFilterState.value.combinedFilter() }
+    }
+
+    if (dragInProgress) {
+        KeyboardModifiersObserver {
+            if (previousKeyboardModifiers != it) {
+                val passesFilter = pointerFilterState.value.keyboardModifiersFilter(dragPointer!!).invoke(it)
+                if (passesFilter) {
                     onDragState.value(DragChange(Offset.Zero, previousKeyboardModifiers, it))
                     previousKeyboardModifiers = it
+                } else {
+                    dragInProgress = false
+                    onDragCancel()
                 }
             }
         }
+    }
 
-        Modifier.pointerInput(Unit) {
-            while (currentCoroutineContext().isActive) {
-                dragInProgress = false
-                awaitPointerEventScope {
-                    val press = awaitPress(
-                        requireUnconsumed = false,
-                        filterPressEvent = filterState.value
-                    )
+    Modifier.pointerInput(Unit) {
+        while (currentCoroutineContext().isActive) {
+            dragInProgress = false
+            dragPointer = null
+            val pressEvent = Channel<Unit>(Channel.CONFLATED)
 
-                    val overSlop = awaitDragStartOnSlop(press)
-                    val pointerId = press.changes[0].id
-
-                    if (overSlop != null) {
-                        dragInProgress = true
-                        onDragStartState.value(
-                            press.changes[0].position,
-                            currentEvent.keyboardModifiers
+            coroutineScope {
+                val dragJob = launch {
+                    awaitPointerEventScope {
+                        val press = awaitPress(
+                            requireUnconsumed = false,
+                            filterPressEvent = combinedFilterState.value
                         )
-                        if (overSlop != Offset.Zero ||
-                            currentEvent.keyboardModifiers != previousKeyboardModifiers
-                        ) {
-                            onDragState.value(
-                                DragChange(overSlop, previousKeyboardModifiers, currentEvent.keyboardModifiers)
-                            )
-                            previousKeyboardModifiers = currentEvent.keyboardModifiers
-                        }
+                        pressEvent.trySend(Unit)
 
-                        val dragCompleted = drag(pointerId) {
-                            val change = DragChange(
-                                it.positionChange(),
-                                previousKeyboardModifiers,
+                        val overSlop = awaitDragStartOnSlop(press)
+                        val pointerId = press.changes[0].id
+
+                        if (overSlop != null) {
+                            dragInProgress = true
+                            dragPointer = press.changes[0].type
+                            onDragStartState.value(
+                                press.changes[0].position,
                                 currentEvent.keyboardModifiers
                             )
-                            previousKeyboardModifiers = currentEvent.keyboardModifiers
-                            onDragState.value(change)
-                            it.consume()
-                        }
+                            if (overSlop != Offset.Zero ||
+                                currentEvent.keyboardModifiers != previousKeyboardModifiers
+                            ) {
+                                onDragState.value(
+                                    DragChange(overSlop, previousKeyboardModifiers, currentEvent.keyboardModifiers)
+                                )
+                                previousKeyboardModifiers = currentEvent.keyboardModifiers
+                            }
 
-                        if (!dragCompleted) {
-                            onDragCancelState.value()
-                        } else {
-                            onDragEndState.value()
+                            val dragCompleted = drag(pointerId) {
+                                val change = DragChange(
+                                    it.positionChange(),
+                                    previousKeyboardModifiers,
+                                    currentEvent.keyboardModifiers
+                                )
+                                previousKeyboardModifiers = currentEvent.keyboardModifiers
+                                onDragState.value(change)
+                                it.consume()
+                            }
+
+                            if (!dragCompleted) {
+                                onDragCancelState.value()
+                            } else {
+                                // with current implementation, the drag never ends here
+                                onDragEndState.value()
+                            }
+                            dragInProgress = false
                         }
-                        dragInProgress = false
+                    }
+                }
+
+                launch {
+                    pressEvent.receive()
+                    awaitPointerEventScope {
+                        while (dragJob.isActive) {
+                            val event = awaitPointerEvent()
+                            if (event.isReleased() && combinedFilterState.value(event)) {
+                                // it always ends the drag here
+                                dragJob.cancel()
+                                onDragEndState.value()
+                            }
+                        }
                     }
                 }
             }
         }
-    } else {
-        Modifier
     }
 }
+
+private fun PointerEvent.isReleased() = type == PointerEventType.Release &&
+    changes.fastAll { it.type == PointerType.Mouse } || changes.fastAll { it.changedToUpIgnoreConsumed() }
 
 @Composable
 private fun KeyboardModifiersObserver(onKeyboardModifiersChanged: (PointerKeyboardModifiers) -> Unit) {

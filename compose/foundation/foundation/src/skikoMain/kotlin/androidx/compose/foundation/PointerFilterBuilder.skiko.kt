@@ -24,10 +24,10 @@ import androidx.compose.ui.input.pointer.PointerType
 import androidx.compose.ui.util.fastAll
 
 @OptIn(ExperimentalComposeUiApi::class)
-class PointerFilterBuilder internal constructor() {
+class PointerFilter internal constructor() {
 
     companion object {
-        val Default: PointerFilterBuilder.() -> Unit = {
+        val Default: PointerFilter.() -> Unit = {
             mouse { button = PointerButton.Primary }
             touch {
                 // no button or keyboardModifiers required
@@ -39,11 +39,13 @@ class PointerFilterBuilder internal constructor() {
                 // no button or keyboardModifiers required
             }
         }
+
+        private val DefaultFilterByKeyboardModifiers: PointerKeyboardModifiers.() -> Boolean = { true }
     }
 
     inner class FilterBuilder {
         var button: PointerButton? = null
-        var keyboardModifiers: PointerKeyboardModifiers.() -> Boolean = { true }
+        var keyboardModifiers: PointerKeyboardModifiers.() -> Boolean = DefaultFilterByKeyboardModifiers
     }
 
     private var mouse: FilterVariant? = null
@@ -68,20 +70,30 @@ class PointerFilterBuilder internal constructor() {
     }
 
     fun stylus(builder: FilterBuilder.() -> Unit) {
-        touch = buildFilterData(PointerType.Stylus, FilterBuilder().also(builder))
+        stylus = buildFilterData(PointerType.Stylus, FilterBuilder().also(builder))
     }
 
     fun eraser(builder: FilterBuilder.() -> Unit) {
-        touch = buildFilterData(PointerType.Eraser, FilterBuilder().also(builder))
+        eraser = buildFilterData(PointerType.Eraser, FilterBuilder().also(builder))
     }
 
-    internal fun build(): (PointerEvent) -> Boolean {
+    internal fun combinedFilter(): (PointerEvent) -> Boolean {
         return { event ->
             mouse?.filter(event) == true ||
                 touch?.filter(event) == true ||
                 stylus?.filter(event) == true ||
                 eraser?.filter(event) == true
         }
+    }
+
+    internal fun keyboardModifiersFilter(pointer: PointerType): PointerKeyboardModifiers.() -> Boolean {
+        return when(pointer) {
+            PointerType.Mouse -> mouse?.keyboardModifiers
+            PointerType.Touch -> touch?.keyboardModifiers
+            PointerType.Stylus -> stylus?.keyboardModifiers
+            PointerType.Eraser -> eraser?.keyboardModifiers
+            else -> null
+        } ?: DefaultFilterByKeyboardModifiers
     }
 }
 

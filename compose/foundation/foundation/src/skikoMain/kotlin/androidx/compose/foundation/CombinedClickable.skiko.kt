@@ -34,7 +34,7 @@ import kotlinx.coroutines.isActive
 @ExperimentalFoundationApi
 fun Modifier.onCombinedClick(
     enabled: Boolean = true,
-    filter: PointerFilterBuilder.() -> Unit = PointerFilterBuilder.Default,
+    filter: PointerFilter.() -> Unit = PointerFilter.Default,
     onDoubleClick: (() -> Unit)? = null,
     onLongClick: (() -> Unit)? = null,
     onClick: () -> Unit
@@ -53,7 +53,7 @@ fun Modifier.onCombinedClick(
 fun Modifier.onCombinedClick(
     enabled: Boolean = true,
     interactionSource: MutableInteractionSource,
-    filter: PointerFilterBuilder.() -> Unit,
+    filter: PointerFilter.() -> Unit,
     onDoubleClick: (() -> Unit)? = null,
     onLongClick: (() -> Unit)? = null,
     onClick: () -> Unit
@@ -76,7 +76,7 @@ fun Modifier.onCombinedClick(
             val filterState = remember {
                 mutableStateOf<(PointerEvent) -> Boolean>({ false })
             }.apply {
-                value = remember(filter) { PointerFilterBuilder().also(filter).build() }
+                value = remember(filter) { PointerFilter().also(filter).combinedFilter() }
             }
 
             Modifier.pointerInput(Unit) {
