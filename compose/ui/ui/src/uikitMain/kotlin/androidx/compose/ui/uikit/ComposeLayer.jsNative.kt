@@ -44,7 +44,7 @@ import androidx.compose.ui.createSkiaLayer
 import androidx.compose.ui.input.key.NativeKeyEvent
 import androidx.compose.ui.window.WindowExceptionHandler
 
-private const val USE_KEYBOARD_EVENT = false
+private const val USE_KEYBOARD_EVENT = true
 
 internal class ComposeLayer {
     private var isDisposed = false

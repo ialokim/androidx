@@ -17,9 +17,15 @@
 package androidx.compose.foundation.text
 
 import androidx.compose.ui.input.key.KeyEvent
+import org.jetbrains.skiko.SkikoKey
 import org.jetbrains.skiko.SkikoKeyboardEventKind
 
 actual val KeyEvent.isTypedEvent: Boolean
-    get() = nativeKeyEvent.kind == SkikoKeyboardEventKind.DOWN &&
-        nativeKeyEvent.key.value != 0L
+    get() {
+        if (nativeKeyEvent.key == SkikoKey.KEY_BACKSPACE) {
+            return false //todo check all KEY's
+        }
+        return nativeKeyEvent.kind == SkikoKeyboardEventKind.DOWN &&
+            nativeKeyEvent.key.value != 0L
+    }
 

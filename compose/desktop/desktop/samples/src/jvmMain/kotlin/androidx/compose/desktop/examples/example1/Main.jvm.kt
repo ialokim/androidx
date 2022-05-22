@@ -213,9 +213,6 @@ private fun FrameWindowScope.ScrollableContent(scrollState: ScrollState) {
         TextField(value = textState, onValueChange = {
             textState = it
         })
-        TextField(value = textState, onValueChange = {
-            textState = it
-        })
     }
 }
 

@@ -18,10 +18,17 @@ package androidx.compose.foundation.text
 
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEvent
+import androidx.compose.ui.input.key.key
+import org.jetbrains.skiko.SkikoKey
 
 internal actual val platformDefaultKeyMapping: KeyMapping = object :KeyMapping {
     override fun map(event: KeyEvent): KeyCommand? {
-        return KeyCommand.LEFT_WORD
+        if (event.nativeKeyEvent.key == SkikoKey.KEY_BACKSPACE) {
+            return KeyCommand.DELETE_PREV_CHAR
+        } else {
+            return null
+        }
+//        return KeyCommand.LEFT_WORD
     }
 }
 
