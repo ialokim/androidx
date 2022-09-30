@@ -38,6 +38,7 @@ import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.yield
 import kotlin.coroutines.cancellation.CancellationException
+import org.jetbrains.skia.Image
 import org.jetbrains.skia.Surface
 
 @ExperimentalTestApi
@@ -46,10 +47,27 @@ actual fun runComposeUiTest(block: ComposeUiTest.() -> Unit) {
     DesktopComposeUiTest().runTest(block)
 }
 
+/**
+ * Variant of [runComposeUiTest] that allows you to specify the size of the surface.
+ *
+ * @param width the desired width of the surface
+ * @param height the desired height of the surface
+ */
+@ExperimentalTestApi
+fun runDesktopComposeUiTest(
+    width: Int, height: Int,
+    block: DesktopComposeUiTest.() -> Unit
+) {
+    DesktopComposeUiTest(width, height).runTest(block)
+}
+
 @InternalTestApi
 @ExperimentalTestApi
 @OptIn(ExperimentalCoroutinesApi::class)
-class DesktopComposeUiTest : ComposeUiTest {
+class DesktopComposeUiTest(
+    width: Int = 1024,
+    height: Int = 768
+) : ComposeUiTest {
 
     override val density = Density(1f, 1f)
 
@@ -92,7 +110,7 @@ class DesktopComposeUiTest : ComposeUiTest {
     }
     private val coroutineContext =
         coroutineDispatcher + uncaughtExceptionHandler + infiniteAnimationPolicy
-    private val surface = Surface.makeRasterN32Premul(1024, 768)
+    private val surface = Surface.makeRasterN32Premul(width, height)
 
     lateinit var scene: ComposeScene
 
@@ -212,6 +230,10 @@ class DesktopComposeUiTest : ComposeUiTest {
         useUnmergedTree: Boolean
     ): SemanticsNodeInteractionCollection {
         return SemanticsNodeInteractionCollection(testContext, useUnmergedTree, matcher)
+    }
+
+    fun captureToImage(): Image {
+        return surface.makeImageSnapshot()
     }
 
     private inner class DesktopTestOwner : TestOwner {
