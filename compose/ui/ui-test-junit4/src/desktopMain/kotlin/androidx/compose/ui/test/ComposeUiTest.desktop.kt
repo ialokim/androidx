@@ -42,7 +42,6 @@ import org.jetbrains.skia.Image
 import org.jetbrains.skia.Surface
 
 @ExperimentalTestApi
-@OptIn(InternalTestApi::class)
 actual fun runComposeUiTest(block: ComposeUiTest.() -> Unit) {
     DesktopComposeUiTest().runTest(block)
 }
@@ -55,15 +54,15 @@ actual fun runComposeUiTest(block: ComposeUiTest.() -> Unit) {
  */
 @ExperimentalTestApi
 fun runDesktopComposeUiTest(
-    width: Int, height: Int,
+    width: Int = 1024,
+    height: Int = 768,
     block: DesktopComposeUiTest.() -> Unit
 ) {
     DesktopComposeUiTest(width, height).runTest(block)
 }
 
-@InternalTestApi
 @ExperimentalTestApi
-@OptIn(ExperimentalCoroutinesApi::class)
+@OptIn(ExperimentalCoroutinesApi::class, InternalTestApi::class)
 class DesktopComposeUiTest(
     width: Int = 1024,
     height: Int = 768
@@ -113,11 +112,12 @@ class DesktopComposeUiTest(
     private val surface = Surface.makeRasterN32Premul(width, height)
 
     lateinit var scene: ComposeScene
+        internal set
 
     private val testOwner = DesktopTestOwner()
     private val testContext = createTestContext(testOwner)
 
-    fun <R> runTest(block: ComposeUiTest.() -> R): R {
+    fun <R> runTest(block: DesktopComposeUiTest.() -> R): R {
         scene = runOnUiThread(::createUi)
         try {
             return block()
@@ -233,6 +233,7 @@ class DesktopComposeUiTest(
     }
 
     fun captureToImage(): Image {
+        waitForIdle()
         return surface.makeImageSnapshot()
     }
 
